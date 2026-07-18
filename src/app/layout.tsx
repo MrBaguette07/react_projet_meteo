@@ -1,5 +1,5 @@
 /**
- * Layout racine — Server Component intégral.
+ * Layout racine - Server Component intégral.
  *
  * Aucun fournisseur d'état n'est nécessaire : les favoris vivent dans un store
  * externe consommé via `useSyncExternalStore` (voir `src/lib/favorites.ts`). La
@@ -40,9 +40,9 @@ const plexMono = IBM_Plex_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "Météo — relevés, prévisions et comparateur de villes",
-    // Les pages de ville complètent ce gabarit (ex. « Lyon — Météo »).
-    template: "%s — Météo",
+    default: "Météo - relevés, prévisions et comparateur de villes",
+    // Les pages de ville complètent ce gabarit (ex. « Lyon - Météo »).
+    template: "%s - Météo",
   },
   description:
     "Recherchez une ville, consultez ses conditions actuelles et ses prévisions sur 7 jours, gérez vos favoris et comparez plusieurs destinations.",
@@ -70,7 +70,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           <footer className="mt-8 border-t bg-card">
             <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-2 px-4 py-5 text-xs text-muted-foreground sm:flex-row sm:px-6">
               <p className="font-mono uppercase tracking-[0.12em]">
-                Station — projet pédagogique Next.js
+                Station - projet pédagogique Next.js
               </p>
               <p>
                 Données{" "}

@@ -4,7 +4,7 @@
  * Colonne du comparateur : une ville, son relevé courant et son indice de confort
  * jour par jour.
  *
- * Le composant reste autonome — il déclenche lui-même son chargement — pour que
+ * Le composant reste autonome - il déclenche lui-même son chargement - pour que
  * l'ajout d'une ville n'oblige pas à recharger les colonnes déjà affichées.
  */
 
@@ -20,13 +20,8 @@ import { WeatherIcon } from "@/components/WeatherIcon";
 import { useCityWeather } from "@/lib/use-city-weather";
 import { computeComfortScore, describeWeather } from "@/lib/weather-codes";
 import { temperatureTextColor } from "@/lib/temperature-scale";
-import {
-  cityHref,
-  countryFlag,
-  formatDayLabel,
-  formatMeasure,
-  formatTemperature,
-} from "@/lib/format";
+import { cityHref, countryFlag, formatDayLabel, formatMeasure } from "@/lib/format";
+import { Precipitation, Temperature, WindSpeed } from "@/components/units/Measurement";
 import { cn } from "@/lib/utils";
 import type { City } from "@/lib/types";
 
@@ -150,7 +145,7 @@ export function ComparisonColumn({ city, isWinner, onRemove, onScored }: Compari
                   className="tabular font-heading text-4xl font-semibold leading-none"
                   style={{ color: temperatureTextColor(weather.current.temperature) }}
                 >
-                  {formatTemperature(weather.current.temperature)}
+                  <Temperature celsius={weather.current.temperature} />
                 </p>
                 <p className="mt-1.5 text-sm text-muted-foreground">{description.label}</p>
               </div>
@@ -159,15 +154,24 @@ export function ComparisonColumn({ city, isWinner, onRemove, onScored }: Compari
 
             <dl className="mt-4 space-y-0 text-sm">
               {[
-                { label: "Ressenti", value: formatTemperature(weather.current.apparentTemperature) },
+                {
+                  label: "Ressenti",
+                  value: <Temperature celsius={weather.current.apparentTemperature} />,
+                },
                 { label: "Humidité", value: formatMeasure(weather.current.humidity, "%") },
-                { label: "Vent", value: formatMeasure(weather.current.windSpeed, "km/h") },
+                {
+                  label: "Vent",
+                  value: <WindSpeed kilometersPerHour={weather.current.windSpeed} />,
+                },
                 {
                   label: "Pluie 7 j",
-                  value: formatMeasure(
-                    weather.daily.reduce((sum, day) => sum + day.precipitationSum, 0),
-                    "mm",
-                    1,
+                  value: (
+                    <Precipitation
+                      millimeters={weather.daily.reduce(
+                        (sum, day) => sum + day.precipitationSum,
+                        0,
+                      )}
+                    />
                   ),
                 },
               ].map((row) => (

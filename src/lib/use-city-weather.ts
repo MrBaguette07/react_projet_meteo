@@ -3,7 +3,7 @@
 /**
  * Récupération de la météo côté client, avec cache partagé entre composants.
  *
- * Le cache est un `Map` au niveau du module — donc commun à toute l'application —
+ * Le cache est un `Map` au niveau du module - donc commun à toute l'application -
  * qui stocke la **promesse** et non la valeur résolue. C'est ce détail qui élimine
  * la duplication : si la grille des favoris et le comparateur demandent Lyon à la
  * même milliseconde, le second appel récupère la promesse en vol du premier au lieu

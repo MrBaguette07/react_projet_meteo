@@ -1,7 +1,7 @@
 /**
  * Helpers de présentation : formatage des nombres, dates et échelles qualitatives.
  *
- * Aucune logique métier ici — uniquement la mise en forme destinée à l'affichage.
+ * Aucune logique métier ici - uniquement la mise en forme destinée à l'affichage.
  * Regrouper ces fonctions évite que chaque composant réinvente son propre format
  * et garantit une cohérence visuelle sur toutes les pages.
  */
@@ -28,7 +28,7 @@ export function formatMeasure(value: number, unit: string, digits = 0): string {
  *
  * Open-Meteo renvoie des horodatages en heure locale mais **sans** suffixe de
  * fuseau (`2026-07-18T14:00`). Les interpréter naïvement les décalerait vers le
- * fuseau du serveur — et le rendu serveur différerait alors du rendu client.
+ * fuseau du serveur - et le rendu serveur différerait alors du rendu client.
  * On les lit donc comme de l'UTC et on les réaffiche en UTC : l'aller-retour est
  * neutre et restitue exactement l'heure locale fournie par l'API.
  */
@@ -124,7 +124,7 @@ export function countryFlag(countryCode: string): string {
 }
 
 /** Marqueur d'une donnée absente, à ne pas afficher telle quelle. */
-const UNKNOWN_VALUE = "—";
+const UNKNOWN_VALUE = "-";
 
 /** Sous-titre d'une ville : région et pays, quand ils sont connus. */
 export function formatCitySubtitle(city: Pick<City, "admin1" | "country">): string {
@@ -140,7 +140,7 @@ export function formatCitySubtitle(city: Pick<City, "admin1" | "country">): stri
  * `cityHref()`. Remplacer les espaces par des tirets rendrait la conversion
  * inverse ambiguë : « Bordeaux-en-Gâtinais » et « Bordeaux en Gâtinais »
  * produiraient le même segment, et le géocodage ne retrouverait plus la bonne
- * commune au retour — c'est exactement ce qui faisait apparaître un pays et un
+ * commune au retour - c'est exactement ce qui faisait apparaître un pays et un
  * fuseau horaire vides sur les villes à nom composé.
  */
 export function citySlug(name: string): string {

@@ -2,8 +2,8 @@
  * Page d'accueil (Server Component).
  *
  * L'en-tête et les raccourcis sont rendus côté serveur ; seuls la barre de
- * recherche et la grille des favoris — qui dépendent du `localStorage` et de la
- * saisie utilisateur — sont des Client Components.
+ * recherche et la grille des favoris - qui dépendent du `localStorage` et de la
+ * saisie utilisateur - sont des Client Components.
  *
  * La recherche est traitée comme l'élément principal de la page plutôt qu'un
  * accessoire posé sous un slogan : c'est l'action par laquelle tout commence ici.

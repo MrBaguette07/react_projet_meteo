@@ -200,6 +200,22 @@ export interface RawForecastResponse {
   };
 }
 
+/**
+ * Réponse de géocodage inverse (BigDataCloud).
+ *
+ * Tous les champs sont optionnels : l'API renvoie des chaînes vides plutôt que
+ * des absences en pleine mer ou en zone non cartographiée.
+ */
+export interface RawReverseGeocodeResponse {
+  /** Commune principale ; vide en zone rurale, `locality` prend alors le relais. */
+  city?: string;
+  locality?: string;
+  countryName?: string;
+  countryCode?: string;
+  /** Région administrative de premier niveau (ex. « Île-de-France »). */
+  principalSubdivision?: string;
+}
+
 export interface RawAirQualityResponse {
   current: {
     european_aqi: number;

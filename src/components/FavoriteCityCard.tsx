@@ -21,13 +21,8 @@ import { useFavorites } from "@/lib/favorites";
 import { useCityWeather } from "@/lib/use-city-weather";
 import { describeWeather } from "@/lib/weather-codes";
 import { temperatureColor, temperatureTextColor } from "@/lib/temperature-scale";
-import {
-  cityHref,
-  countryFlag,
-  formatCitySubtitle,
-  formatMeasure,
-  formatTemperature,
-} from "@/lib/format";
+import { cityHref, countryFlag, formatCitySubtitle } from "@/lib/format";
+import { Temperature, WindSpeed } from "@/components/units/Measurement";
 import type { FavoriteCity } from "@/lib/types";
 
 export function FavoriteCityCard({ city }: { city: FavoriteCity }) {
@@ -82,7 +77,7 @@ export function FavoriteCityCard({ city }: { city: FavoriteCity }) {
                     className="tabular font-heading text-4xl font-semibold leading-none"
                     style={{ color: temperatureTextColor(weather.current.temperature) }}
                   >
-                    {formatTemperature(weather.current.temperature)}
+                    <Temperature celsius={weather.current.temperature} />
                   </p>
                   <p className="mt-1.5 truncate text-sm text-muted-foreground">
                     {description.label}
@@ -103,14 +98,14 @@ export function FavoriteCityCard({ city }: { city: FavoriteCity }) {
               <div className="flex gap-1.5">
                 <dt className="uppercase tracking-[0.1em]">Min/Max</dt>
                 <dd className="font-medium text-foreground">
-                  {formatTemperature(weather.daily[0].temperatureMin)}/
-                  {formatTemperature(weather.daily[0].temperatureMax)}
+                  <Temperature celsius={weather.daily[0].temperatureMin} />/
+                  <Temperature celsius={weather.daily[0].temperatureMax} />
                 </dd>
               </div>
               <div className="flex gap-1.5">
                 <dt className="uppercase tracking-[0.1em]">Vent</dt>
                 <dd className="font-medium text-foreground">
-                  {formatMeasure(weather.current.windSpeed, "km/h")}
+                  <WindSpeed kilometersPerHour={weather.current.windSpeed} />
                 </dd>
               </div>
             </dl>

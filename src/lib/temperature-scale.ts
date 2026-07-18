@@ -1,13 +1,13 @@
 /**
- * Échelle chromatique de température — l'élément signature de l'interface.
+ * Échelle chromatique de température - l'élément signature de l'interface.
  *
  * Dans cette application, la couleur n'est pas décorative : elle **encode la
  * donnée**. Chaque température affichée porte la teinte correspondant à sa valeur,
  * si bien qu'une ville chaude et une ville fraîche se distinguent avant même
  * d'avoir lu le moindre chiffre.
  *
- * L'échelle suit la convention des cartes météorologiques — bleu pour le froid,
- * rouge pour le chaud — avec un point important : autour de 17 °C, la chroma
+ * L'échelle suit la convention des cartes météorologiques - bleu pour le froid,
+ * rouge pour le chaud - avec un point important : autour de 17 °C, la chroma
  * s'effondre presque à zéro. Le passage du bleu au chaud traverse donc une zone
  * quasi neutre au lieu de virer au vert, ce qui éviterait un dégradé « arc-en-ciel »
  * illisible et sans rapport avec l'usage.
@@ -103,7 +103,7 @@ export const SCALE_TICKS = [-10, 0, 10, 20, 30, 40] as const;
  * Dégradé CSS couvrant toute l'échelle.
  *
  * Échantillonné tous les 2 °C : suffisamment fin pour être perçu continu, et
- * fidèle à la courbe réelle — un dégradé à deux arrêts la court-circuiterait.
+ * fidèle à la courbe réelle - un dégradé à deux arrêts la court-circuiterait.
  */
 export function temperatureGradient(direction = "to right"): string {
   const min = SCALE_TICKS[0];

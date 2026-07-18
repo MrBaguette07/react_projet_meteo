@@ -3,7 +3,7 @@
  *
  * Les favoris vivent dans le `localStorage` : le serveur ne les connaît pas et ne
  * peut donc pas pré-rendre leurs vignettes. Cette route permet au composant client
- * de récupérer la météo tout en **réutilisant le cache serveur** — deux visiteurs
+ * de récupérer la météo tout en **réutilisant le cache serveur** - deux visiteurs
  * ayant Paris en favori ne déclenchent qu'un seul appel à Open-Meteo.
  */
 

@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * Comparateur de villes — la fonctionnalité originale de l'application.
+ * Comparateur de villes - la fonctionnalité originale de l'application.
  *
  * Chaque ville sélectionnée reçoit un **indice de confort sur 100**, calculé par
  * `computeComfortScore()` à partir de l'état du ciel, de la température, du vent
@@ -29,7 +29,7 @@ import type { City, FavoriteCity } from "@/lib/types";
 /** Au-delà de quatre colonnes, la grille devient illisible sur un écran d'ordinateur. */
 const MAX_CITIES = 4;
 
-/** Instantané serveur et valeur de repli — constante partagée, donc stable. */
+/** Instantané serveur et valeur de repli - constante partagée, donc stable. */
 const NO_CITIES: City[] = [];
 
 /** Valide la sélection restaurée : une entrée corrompue est simplement ignorée. */
@@ -141,7 +141,7 @@ export function CityComparator() {
             <div className="min-w-0 flex-1">
               {isFull ? (
                 <p className="rounded-md border border-dashed px-4 py-2.5 text-sm text-muted-foreground">
-                  Maximum de {MAX_CITIES} villes atteint — retirez-en une pour en ajouter une autre.
+                  Maximum de {MAX_CITIES} villes atteint - retirez-en une pour en ajouter une autre.
                 </p>
               ) : (
                 <SearchBar onSelect={addCity} placeholder="Ajouter une ville au comparatif…" />

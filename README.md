@@ -1,4 +1,4 @@
-# Météo — application de prévisions, favoris et comparateur
+# Météo - application de prévisions, favoris et comparateur
 
 Application web permettant de rechercher une ville, de consulter ses conditions
 météorologiques actuelles et ses prévisions sur 7 jours, de gérer une liste de villes
@@ -29,7 +29,7 @@ Développée avec **Next.js 16 (App Router)**, **TypeScript**, **Tailwind CSS 4*
 
 ## Captures d'écran
 
-### Page d'accueil — recherche et favoris
+### Page d'accueil - recherche et favoris
 
 ![Page d'accueil avec la liste des villes favorites](docs/screenshots/01-accueil-favoris.png)
 
@@ -41,7 +41,7 @@ Développée avec **Next.js 16 (App Router)**, **TypeScript**, **Tailwind CSS 4*
 
 ![Page de détail : conditions actuelles, prévisions, soleil, qualité de l'air et carte](docs/screenshots/03-detail-ville.png)
 
-### Fonctionnalité originale — comparateur de villes
+### Fonctionnalité originale - comparateur de villes
 
 ![Comparateur de trois villes avec indice de confort et verdict](docs/screenshots/04-comparateur.png)
 
@@ -61,7 +61,7 @@ Développée avec **Next.js 16 (App Router)**, **TypeScript**, **Tailwind CSS 4*
   du ciel, les extrêmes du jour et le vent, avec accès direct à la fiche détaillée.
 - **Villes suggérées** pour essayer l'application sans rien saisir.
 
-### Page de détail — `/ville/[nom]`
+### Page de détail - `/ville/[nom]`
 
 - **Conditions actuelles** : température, ressenti, humidité, pression, vent
   (vitesse, direction cardinale, rafales), nébulosité, précipitations et indice UV.
@@ -91,7 +91,7 @@ Développée avec **Next.js 16 (App Router)**, **TypeScript**, **Tailwind CSS 4*
   qu'aucun élément ne se déplace à l'arrivée des données.
 - `error.tsx` : écran dédié avec bouton **Réessayer** (`reset()`), qui relance le
   rendu du segment sans recharger toute l'application.
-- `not-found.tsx` : ville inconnue du géocodage — une barre de recherche est
+- `not-found.tsx` : ville inconnue du géocodage - une barre de recherche est
   proposée sur place pour corriger la saisie.
 - Page 404 globale pour toute URL non reconnue.
 
@@ -125,8 +125,8 @@ Le cœur est la fonction pure `computeComfortScore()`
 | Pluie | Proportionnelle à la probabilité annoncée, jusqu'à −18 |
 
 Le choix de **pénalités indépendantes plutôt que d'une moyenne pondérée** est
-délibéré : une journée peut être disqualifiée par un seul facteur extrême — un orage,
-une canicule — qu'une moyenne aurait lissé.
+délibéré : une journée peut être disqualifiée par un seul facteur extrême - un orage,
+une canicule - qu'une moyenne aurait lissé.
 
 Chaque colonne calcule les scores des 7 prochains jours, les affiche sous forme
 d'histogramme coloré, et remonte sa moyenne au composant parent. Le verdict n'est
@@ -134,7 +134,7 @@ affiché que lorsque **toutes** les colonnes ont fini de charger et qu'au moins 
 villes sont sélectionnées : désigner un gagnant sur un comparatif incomplet serait
 trompeur. Une égalité parfaite n'affiche aucun gagnant.
 
-La sélection est persistée dans le `sessionStorage` — revenir depuis une fiche ville
+La sélection est persistée dans le `sessionStorage` - revenir depuis une fiche ville
 ne la perd pas, sans pour autant encombrer le stockage à long terme, réservé aux
 favoris.
 
@@ -164,8 +164,8 @@ techniques.
 | Texte courant | IBM Plex Sans | Paragraphes, libellés d'interface |
 | Données | IBM Plex Mono | Intitulés de champ, heures, coordonnées, mesures |
 
-Les intitulés de champ reprennent la convention des feuilles d'observation —
-petites capitales monospacées et espacées (classe `.field-label`) — ce qui rend
+Les intitulés de champ reprennent la convention des feuilles d'observation -
+petites capitales monospacées et espacées (classe `.field-label`) - ce qui rend
 impossible de confondre une étiquette et une valeur. Tous les chiffres sont en
 `tabular-nums` afin de s'aligner en colonne d'une ligne à l'autre.
 
@@ -173,7 +173,7 @@ impossible de confondre une étiquette et une valeur. Tous les chiffres sont en
 
 C'est l'élément signature de l'interface : **la couleur n'est pas décorative, elle
 porte la donnée**. Chaque température affichée prend la teinte correspondant à sa
-valeur sur une échelle continue, et cette teinte se propage partout — filet en
+valeur sur une échelle continue, et cette teinte se propage partout - filet en
 tête des cartes favorites, fond dégradé du relevé principal, points et segments de
 la courbe horaire, barres min/max des prévisions.
 
@@ -181,12 +181,12 @@ Conséquence directe : la grille des favoris se lit comme une bande de températ
 avant même d'être déchiffrée, et la fiche d'une ville sous la canicule ne
 ressemble pas à celle d'une ville sous la neige.
 
-L'échelle suit la convention des cartes météorologiques — bleu pour le froid,
-rouge pour le chaud — avec un détail qui compte : autour de 17 °C, la chroma
+L'échelle suit la convention des cartes météorologiques - bleu pour le froid,
+rouge pour le chaud - avec un détail qui compte : autour de 17 °C, la chroma
 s'effondre presque à zéro. Le passage du froid au chaud traverse donc une zone
 quasi neutre au lieu de virer au vert, ce qui éviterait un dégradé « arc-en-ciel »
 illisible. Les couleurs sont interpolées en **OKLCH**, où la clarté perçue reste
-constante — contrairement au RVB, qui produit des zones ternes entre deux teintes
+constante - contrairement au RVB, qui produit des zones ternes entre deux teintes
 éloignées.
 
 Une **légende** sur la page d'accueil donne la clé de ce code couleur, au même
@@ -234,7 +234,7 @@ cd meteo-app
 # 2. Installer les dépendances
 npm install
 
-# 3. Lancer en développement — http://localhost:3000
+# 3. Lancer en développement - http://localhost:3000
 npm run dev
 ```
 
@@ -252,7 +252,7 @@ npx tsc --noEmit  # Vérification des types
 ## Variables d'environnement
 
 **Aucune variable n'est requise.** Les trois APIs d'Open-Meteo utilisées sont
-publiques, gratuites et ne demandent pas de clé — le projet démarre sans fichier
+publiques, gratuites et ne demandent pas de clé - le projet démarre sans fichier
 `.env.local`.
 
 Ce choix est volontaire : il garantit qu'aucun secret ne peut se retrouver dans le
@@ -273,7 +273,7 @@ ou d'accéder aux APIs du navigateur.
 
 | Composant | Type | Justification |
 |---|---|---|
-| `app/layout.tsx`, `SiteHeader` | **Serveur** | Purement déclaratifs — aucun JavaScript envoyé au client |
+| `app/layout.tsx`, `SiteHeader` | **Serveur** | Purement déclaratifs - aucun JavaScript envoyé au client |
 | `app/page.tsx`, `app/comparer/page.tsx` | **Serveur** | Contenu statique, métadonnées |
 | `app/ville/[nom]/page.tsx` | **Serveur** | Les données météo sont récupérées pendant le rendu : le HTML arrive complet, référençable, sans écran de chargement |
 | `CurrentConditions`, `DailyForecastList`, `HourlyStrip`, `SunPath`, `AirQualityCard`, `CityMap`, `WeatherIcon`, `TemperatureScaleLegend` | **Serveur** | Reçoivent des données déjà résolues et n'ont aucune interactivité |
@@ -302,20 +302,20 @@ d'hydratation, tandis que l'écoute de l'évènement `storage` synchronise les o
 
 Trois niveaux de cache se complètent :
 
-1. **Cache serveur de Next.js** — chaque `fetch` déclare une durée de revalidation
+1. **Cache serveur de Next.js** - chaque `fetch` déclare une durée de revalidation
    (24 h pour le géocodage, 15 min pour la météo, 30 min pour la qualité de l'air).
    La déduplication se faisant sur l'URL, tous les paramètres sont construits par un
    helper `buildUrl()` qui **trie les clés**, garantissant qu'une même requête logique
    produit toujours exactement la même chaîne.
-2. **Cache client partagé** — [`src/lib/use-city-weather.ts`](src/lib/use-city-weather.ts)
+2. **Cache client partagé** - [`src/lib/use-city-weather.ts`](src/lib/use-city-weather.ts)
    mémorise la **promesse** et non la valeur résolue : si la grille des favoris et le
    comparateur demandent la même ville simultanément, le second appel récupère la
    requête déjà en vol au lieu d'en lancer une seconde.
-3. **Cache de saisie** — la barre de recherche conserve les résultats déjà obtenus,
+3. **Cache de saisie** - la barre de recherche conserve les résultats déjà obtenus,
    ce qui rend instantané l'effacement d'un caractère.
 
 S'y ajoutent, côté recherche, un **debounce** de 280 ms et un `AbortController` qui
-annule la requête précédente — une réponse lente ne peut donc pas écraser une plus
+annule la requête précédente - une réponse lente ne peut donc pas écraser une plus
 récente.
 
 Enfin, la page de détail lance ses deux appels (météo et qualité de l'air) en
@@ -333,7 +333,7 @@ ajustements méritent d'être signalés :
 - le champ de saisie est rendu **à l'intérieur** de `Command`, et non dans le
   popover. cmdk installe son gestionnaire de touches sur sa racine : les flèches et
   Entrée frappées dans le champ y remontent donc naturellement et pilotent la liste.
-  Le popover étant rendu dans un portail, seul le DOM est déplacé — l'arbre React
+  Le popover étant rendu dans un portail, seul le DOM est déplacé - l'arbre React
   reste intact, si bien que le contexte et la propagation des évènements
   continuent de fonctionner.
 
@@ -342,8 +342,8 @@ ajustements méritent d'être signalés :
 Deux routes API servent d'intermédiaires pour les composants client, qui ne peuvent
 pas appeler directement les fonctions serveur :
 
-- `GET /api/geocoding?q=…` — suggestions de villes ;
-- `GET /api/weather?lat=…&lon=…` — météo d'un point (coordonnées validées).
+- `GET /api/geocoding?q=…` - suggestions de villes ;
+- `GET /api/weather?lat=…&lon=…` - météo d'un point (coordonnées validées).
 
 Elles font transiter les réponses par le cache serveur : la déduplication bénéficie
 ainsi à **tous** les visiteurs, et non à un seul navigateur.
@@ -352,14 +352,14 @@ ainsi à **tous** les visiteurs, et non à un seul navigateur.
 
 `/ville/[nom]` accepte deux formes :
 
-- `/ville/Lyon?lat=45.7485&lon=4.8467` — produite par la recherche et les favoris ;
+- `/ville/Lyon?lat=45.7485&lon=4.8467` - produite par la recherche et les favoris ;
   les coordonnées lèvent toute ambiguïté entre homonymes ;
-- `/ville/Lyon` — saisie ou partagée à la main, résolue par géocodage. En cas
+- `/ville/Lyon` - saisie ou partagée à la main, résolue par géocodage. En cas
   d'homonymes, la ville la plus peuplée est retenue.
 
 Le nom est transporté **tel quel** dans l'URL, seul l'encodage standard étant
 appliqué. Remplacer les espaces par des tirets rendrait la conversion inverse
-ambiguë — « Bordeaux-en-Gâtinais » et « Bordeaux en Gâtinais » produiraient le
+ambiguë - « Bordeaux-en-Gâtinais » et « Bordeaux en Gâtinais » produiraient le
 même segment, et le géocodage ne retrouverait plus la bonne commune au retour.
 Une seconde tentative avec les tirets convertis en espaces rattrape malgré tout
 les liens écrits à la main du type `/ville/New-York`.
@@ -435,7 +435,7 @@ src/
     ├── weather-codes.ts        # Codes WMO et indice de confort
     ├── temperature-scale.ts    # Échelle chromatique de température (OKLCH)
     ├── format.ts               # Formatage et échelles qualitatives
-    ├── utils.ts                # `cn()` — fusion de classes (shadcn/ui)
+    ├── utils.ts                # `cn()` - fusion de classes (shadcn/ui)
     ├── favorites.ts            # Store des favoris
     ├── storage-store.ts        # Store générique localStorage/sessionStorage
     ├── use-city-weather.ts     # Chargement météo client avec cache partagé

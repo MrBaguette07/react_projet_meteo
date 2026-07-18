@@ -5,7 +5,7 @@
  * de graphes : les valeurs sont normalisées sur l'amplitude réelle de la période,
  * ce qui rend les variations lisibles même par temps stable.
  *
- * Le tracé n'est pas d'une couleur unique — chaque segment prend la teinte de sa
+ * Le tracé n'est pas d'une couleur unique - chaque segment prend la teinte de sa
  * température. La courbe devient ainsi sa propre légende : on voit la journée se
  * réchauffer puis se refroidir.
  */
@@ -15,7 +15,8 @@ import { SectionHeading } from "@/components/Metric";
 import { WeatherIcon } from "@/components/WeatherIcon";
 import { describeWeather } from "@/lib/weather-codes";
 import { temperatureColor } from "@/lib/temperature-scale";
-import { formatTemperature, formatTime } from "@/lib/format";
+import { formatTime } from "@/lib/format";
+import { Temperature } from "@/components/units/Measurement";
 import type { HourlyForecast } from "@/lib/types";
 
 /** Hauteur du tracé, en unités du `viewBox`. */
@@ -45,7 +46,7 @@ export function HourlyStrip({ hours }: { hours: HourlyForecast[] }) {
         <SectionHeading
           aside={
             <span className="tabular font-mono text-xs text-muted-foreground">
-              {formatTemperature(min)} → {formatTemperature(max)}
+              <Temperature celsius={min} /> → <Temperature celsius={max} />
             </span>
           }
         >
@@ -91,7 +92,7 @@ export function HourlyStrip({ hours }: { hours: HourlyForecast[] }) {
                   style={{ width: COLUMN_WIDTH }}
                 >
                   <span className="tabular font-heading text-sm font-semibold">
-                    {formatTemperature(hour.temperature)}
+                    <Temperature celsius={hour.temperature} />
                   </span>
                   <WeatherIcon
                     name={describeWeather(hour.weatherCode).icon}

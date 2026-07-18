@@ -1,13 +1,13 @@
 /**
- * Page de détail d'une ville — route dynamique `/ville/[nom]`.
+ * Page de détail d'une ville - route dynamique `/ville/[nom]`.
  *
  * Server Component : la météo est récupérée pendant le rendu serveur, donc le HTML
  * arrive complet et référençable, sans écran de chargement côté client.
  *
  * L'URL accepte deux formes :
- *  - `/ville/Lyon?lat=45.7485&lon=4.8467` — produite par la recherche et les favoris,
+ *  - `/ville/Lyon?lat=45.7485&lon=4.8467` - produite par la recherche et les favoris,
  *    les coordonnées évitent un appel de géocodage et lèvent toute ambiguïté ;
- *  - `/ville/Lyon` — saisie ou partagée à la main, résolue via `resolveCity()`.
+ *  - `/ville/Lyon` - saisie ou partagée à la main, résolue via `resolveCity()`.
  */
 
 import { notFound } from "next/navigation";
@@ -32,7 +32,7 @@ interface PageProps {
  * Détermine la ville ciblée par l'URL.
  *
  * Quand les coordonnées sont fournies, on interroge tout de même le géocodage pour
- * récupérer pays, fuseau et identifiant — indispensables aux favoris. Cet appel est
+ * récupérer pays, fuseau et identifiant - indispensables aux favoris. Cet appel est
  * mis en cache 24 h côté serveur, son coût réel est donc négligeable.
  */
 async function resolveCityFromRoute(nom: string, lat?: string, lon?: string): Promise<City | null> {
@@ -57,7 +57,7 @@ async function resolveCityFromRoute(nom: string, lat?: string, lon?: string): Pr
   return {
     id: Math.round(latitude * 1000) * 100000 + Math.round(longitude * 1000),
     name,
-    country: city?.country ?? "—",
+    country: city?.country ?? "-",
     countryCode: city?.countryCode ?? "",
     latitude,
     longitude,

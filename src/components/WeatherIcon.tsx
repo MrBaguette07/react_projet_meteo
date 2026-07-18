@@ -7,7 +7,7 @@
  *
  * Les dégradés sont déclarés **une seule fois** par `<WeatherIconDefs />`, monté
  * dans le layout racine. Les inclure dans chaque icône dupliquerait les mêmes `id`
- * des dizaines de fois dans le document — un HTML invalide, dont le rendu casserait
+ * des dizaines de fois dans le document - un HTML invalide, dont le rendu casserait
  * dès que la première occurrence serait démontée.
  */
 
@@ -58,7 +58,7 @@ interface WeatherIconProps {
  * Astre principal : soleil le jour, lune la nuit.
  *
  * Les rayons sont peints en couleur unie et non avec le dégradé du disque : un
- * `linearGradient` en unités `objectBoundingBox` — le défaut SVG — n'a pas de
+ * `linearGradient` en unités `objectBoundingBox` - le défaut SVG - n'a pas de
  * surface de référence sur un segment vertical de largeur nulle, et le trait ne
  * serait tout simplement pas rendu.
  */

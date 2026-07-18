@@ -1,7 +1,7 @@
 /**
  * Relevé principal : température, état du ciel et grille d'instruments.
  *
- * Server Component — il ne reçoit que des données déjà résolues.
+ * Server Component - il ne reçoit que des données déjà résolues.
  *
  * La température est affichée dans la couleur qui lui correspond sur l'échelle
  * chromatique (voir `src/lib/temperature-scale.ts`), et la même teinte teinte
@@ -13,15 +13,22 @@ import { WeatherIcon } from "@/components/WeatherIcon";
 import { Metric } from "@/components/Metric";
 import { Card, CardContent } from "@/components/ui/card";
 import { describeWeather } from "@/lib/weather-codes";
-import { temperatureColor, temperatureTextColor } from "@/lib/temperature-scale";
+import { temperatureColor } from "@/lib/temperature-scale";
 import {
   describeUvIndex,
   formatMeasure,
-  formatTemperature,
   formatTime,
   formatWindDirection,
   TONE_FILLS,
 } from "@/lib/format";
+import {
+  Precipitation,
+  Pressure,
+  Temperature,
+  TemperatureUnit,
+  WindSpeed,
+} from "@/components/units/Measurement";
+import { ConvertedTemperature } from "@/components/units/ConvertedTemperature";
 import type { CurrentWeather } from "@/lib/types";
 
 interface CurrentConditionsProps {
@@ -59,19 +66,20 @@ export function CurrentConditions({
             <p className="field-label">Relevé de {formatTime(current.time)}</p>
 
             <div className="mt-3 flex items-start">
-              <span
+              <ConvertedTemperature
+                celsius={current.temperature}
                 className="tabular font-heading text-[5.5rem] font-semibold leading-[0.85] tracking-tight sm:text-[7rem]"
-                style={{ color: temperatureTextColor(current.temperature) }}
-              >
-                {Math.round(current.temperature)}
+              />
+              <span className="mt-2 font-heading text-3xl font-medium text-muted-foreground">
+                <TemperatureUnit />
               </span>
-              <span className="mt-2 font-heading text-3xl font-medium text-muted-foreground">°C</span>
             </div>
 
             <p className="mt-4 font-heading text-xl font-medium">{description.label}</p>
             <p className="tabular mt-1 text-sm text-muted-foreground">
-              Ressenti {formatTemperature(current.apparentTemperature)} · Min{" "}
-              {formatTemperature(temperatureMin)} · Max {formatTemperature(temperatureMax)}
+              Ressenti <Temperature celsius={current.apparentTemperature} /> · Min{" "}
+              <Temperature celsius={temperatureMin} /> · Max{" "}
+              <Temperature celsius={temperatureMax} />
             </p>
           </div>
 
@@ -85,14 +93,22 @@ export function CurrentConditions({
 
         <div className="mt-8 grid grid-cols-2 gap-x-6 gap-y-4 sm:grid-cols-3 lg:grid-cols-6">
           <Metric label="Humidité" value={formatMeasure(current.humidity, "%")} />
-          <Metric label="Pression" value={formatMeasure(current.pressure, "hPa")} />
+          <Metric label="Pression" value={<Pressure hectopascals={current.pressure} />} />
           <Metric
             label="Vent"
-            value={formatMeasure(current.windSpeed, "km/h")}
-            hint={`${formatWindDirection(current.windDirection)} · rafales ${formatMeasure(current.windGusts, "km/h")}`}
+            value={<WindSpeed kilometersPerHour={current.windSpeed} />}
+            hint={
+              <>
+                {formatWindDirection(current.windDirection)} · rafales{" "}
+                <WindSpeed kilometersPerHour={current.windGusts} />
+              </>
+            }
           />
           <Metric label="Nébulosité" value={formatMeasure(current.cloudCover, "%")} />
-          <Metric label="Précipitations" value={formatMeasure(current.precipitation, "mm", 1)} />
+          <Metric
+            label="Précipitations"
+            value={<Precipitation millimeters={current.precipitation} />}
+          />
           <Metric
             label="Indice UV"
             value={uvIndex.toFixed(1)}

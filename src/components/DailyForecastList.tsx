@@ -14,7 +14,8 @@ import { SectionHeading } from "@/components/Metric";
 import { WeatherIcon } from "@/components/WeatherIcon";
 import { describeWeather } from "@/lib/weather-codes";
 import { temperatureColor } from "@/lib/temperature-scale";
-import { formatDayLabel, formatShortDate, formatTemperature } from "@/lib/format";
+import { formatDayLabel, formatShortDate } from "@/lib/format";
+import { Temperature } from "@/components/units/Measurement";
 import type { DailyForecast } from "@/lib/types";
 
 export function DailyForecastList({ days }: { days: DailyForecast[] }) {
@@ -28,7 +29,7 @@ export function DailyForecastList({ days }: { days: DailyForecast[] }) {
         <SectionHeading
           aside={
             <span className="tabular font-mono text-xs text-muted-foreground">
-              {formatTemperature(weekMin)} → {formatTemperature(weekMax)}
+              <Temperature celsius={weekMin} /> → <Temperature celsius={weekMax} />
             </span>
           }
         >
@@ -65,7 +66,7 @@ export function DailyForecastList({ days }: { days: DailyForecast[] }) {
 
                 <div className="flex flex-1 items-center gap-2.5 sm:flex-none sm:gap-3">
                   <span className="tabular w-9 text-right text-sm text-muted-foreground">
-                    {formatTemperature(day.temperatureMin)}
+                    <Temperature celsius={day.temperatureMin} />
                   </span>
                   <span
                     className="relative h-1.5 flex-1 overflow-hidden rounded-full bg-muted sm:w-32 sm:flex-none"
@@ -83,7 +84,7 @@ export function DailyForecastList({ days }: { days: DailyForecast[] }) {
                     />
                   </span>
                   <span className="tabular w-9 font-heading text-sm font-semibold">
-                    {formatTemperature(day.temperatureMax)}
+                    <Temperature celsius={day.temperatureMax} />
                   </span>
                 </div>
               </li>

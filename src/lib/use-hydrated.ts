@@ -13,8 +13,8 @@ const noopSubscribe = () => () => {};
  * utilisateur qui en possède, le temps que le stockage local soit lu.
  *
  * L'implémentation passe par `useSyncExternalStore` plutôt qu'un `useState` + effet :
- * React garantit ainsi que le rendu d'hydratation utilise `false` — donc identique
- * au HTML serveur — puis bascule à `true` sans risque de divergence.
+ * React garantit ainsi que le rendu d'hydratation utilise `false` - donc identique
+ * au HTML serveur - puis bascule à `true` sans risque de divergence.
  */
 export function useHydrated(): boolean {
   return useSyncExternalStore(

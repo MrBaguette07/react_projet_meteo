@@ -28,7 +28,7 @@ export default function ComparePage() {
         <p className="mt-3 max-w-2xl text-pretty text-muted-foreground">
           Mettez jusqu&apos;à quatre villes côte à côte. Chacune reçoit un indice de confort
           sur 100, calculé jour par jour à partir de l&apos;état du ciel, de la température,
-          du vent et du risque de pluie — de quoi trancher d&apos;un coup d&apos;œil.
+          du vent et du risque de pluie - de quoi trancher d&apos;un coup d&apos;œil.
         </p>
       </header>
 

@@ -12,7 +12,7 @@
  * Trois mécanismes limitent le trafic réseau :
  *  - un **debounce** de 280 ms, qui laisse passer la frappe avant d'interroger l'API ;
  *  - un **cache mémoire** (`Map` conservée entre les rendus via `useRef`), qui rend
- *    instantanée toute requête déjà vue — typiquement lorsqu'on efface un caractère ;
+ *    instantanée toute requête déjà vue - typiquement lorsqu'on efface un caractère ;
  *  - un **AbortController**, qui annule la requête précédente afin qu'une réponse
  *    lente arrivant après une plus récente n'écrase pas les suggestions affichées.
  */
@@ -88,7 +88,7 @@ export function SearchBar({
     const timer = setTimeout(async () => {
       const key = trimmed.toLowerCase();
 
-      // Requête déjà vue — typiquement après l'effacement d'un caractère.
+      // Requête déjà vue - typiquement après l'effacement d'un caractère.
       const cached = cacheRef.current.get(key);
       if (cached) {
         setSearch({ results: cached, isLoading: false, error: null });
@@ -123,7 +123,7 @@ export function SearchBar({
     };
   }, [query]);
 
-  // Sous le seuil de déclenchement, la liste est vide et rien ne charge — inutile
+  // Sous le seuil de déclenchement, la liste est vide et rien ne charge - inutile
   // de le réécrire dans l'état, la valeur se déduit de la saisie courante.
   const isQueryLongEnough = query.trim().length >= MIN_QUERY_LENGTH;
   const results = isQueryLongEnough ? search.results : [];
@@ -155,7 +155,7 @@ export function SearchBar({
      * cmdk installe son gestionnaire de touches sur sa racine : les flèches et
      * Entrée frappées dans le champ y remontent donc naturellement et pilotent la
      * liste, sans avoir à recâbler quoi que ce soit. Le popover étant rendu dans
-     * un portail, seul le DOM est déplacé — l'arbre React, lui, reste intact, si
+     * un portail, seul le DOM est déplacé - l'arbre React, lui, reste intact, si
      * bien que le contexte et la propagation des évènements continuent de
      * fonctionner. Les styles de conteneur de `Command` sont neutralisés puisque
      * la surface visible est celle du popover.

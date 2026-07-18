@@ -5,7 +5,7 @@
  *
  * Le stockage du navigateur est une source de vérité **externe** à React. Le lire
  * dans un `useEffect` pour recopier la valeur dans un état provoquerait un rendu en
- * cascade à chaque montage — ce que React 19 signale désormais explicitement.
+ * cascade à chaque montage - ce que React 19 signale désormais explicitement.
  * On expose donc le contrat attendu par `useSyncExternalStore` : un abonnement, un
  * instantané client et un instantané serveur.
  *

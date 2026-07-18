@@ -6,7 +6,7 @@
  *  1. **Pas de duplication d'appels.** Chaque `fetch` passe par le cache de données
  *     de Next.js (`next.revalidate`). Deux composants serveur qui demandent la météo
  *     de la même ville pendant la fenêtre de revalidation partagent une seule requête
- *     réseau — la déduplication est faite sur l'URL, donc les paramètres sont toujours
+ *     réseau - la déduplication est faite sur l'URL, donc les paramètres sont toujours
  *     construits dans le même ordre via `buildUrl()`.
  *  2. **Erreurs typées.** Les échecs remontent sous forme d'`OpenMeteoError`, ce qui
  *     permet aux `error.tsx` d'afficher un message utile plutôt qu'une trace brute.
@@ -21,6 +21,7 @@ import type {
   RawForecastResponse,
   RawGeocodingResponse,
   RawGeocodingResult,
+  RawReverseGeocodeResponse,
   WeatherBundle,
 } from "@/lib/types";
 
@@ -33,7 +34,7 @@ const AIR_QUALITY_BASE = "https://air-quality-api.open-meteo.com/v1/air-quality"
  *
  * Le géocodage est quasi immuable (une ville ne se déplace pas) : 24 h.
  * La météo est rafraîchie toutes les 15 min, ce qui correspond à la cadence
- * de mise à jour réelle des modèles côté Open-Meteo — interroger plus souvent
+ * de mise à jour réelle des modèles côté Open-Meteo - interroger plus souvent
  * ne renverrait que des données identiques.
  */
 const REVALIDATE = {
@@ -96,7 +97,7 @@ function toCity(raw: RawGeocodingResult): City {
   return {
     id: raw.id,
     name: raw.name,
-    country: raw.country ?? "—",
+    country: raw.country ?? "-",
     countryCode: raw.country_code ?? "",
     admin1: raw.admin1,
     latitude: raw.latitude,
@@ -149,7 +150,7 @@ async function findBestMatch(name: string): Promise<City | null> {
 }
 
 /**
- * Résout un nom de ville en une `City` unique — utilisé par la route dynamique
+ * Résout un nom de ville en une `City` unique - utilisé par la route dynamique
  * `/ville/[nom]` quand l'URL est partagée sans coordonnées.
  *
  * Une seconde tentative remplace les tirets par des espaces : elle rattrape les
@@ -161,6 +162,66 @@ export async function resolveCity(name: string): Promise<City | null> {
   if (direct) return direct;
 
   return name.includes("-") ? findBestMatch(name.replace(/-/g, " ")) : null;
+}
+
+/* -------------------------------------------------------------------------- */
+/*                            Géocodage inverse                               */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Retrouve la ville correspondant à des coordonnées.
+ *
+ * Open-Meteo ne propose pas d'endpoint de géocodage inverse : on passe donc par
+ * BigDataCloud, dont l'API `client` est gratuite, sans clé et sans quota bloquant.
+ * Seul le **nom** de la localité en est extrait ; il est ensuite repassé dans notre
+ * propre géocodage afin d'obtenir une `City` complète (identifiant stable, pays,
+ * fuseau, population). Les favoris et le comparateur manipulent ainsi exactement le
+ * même type d'objet, quelle que soit son origine.
+ *
+ * Si la localité trouvée n'est pas reconnue par Open-Meteo — hameau, zone peu
+ * peuplée — on renvoie une `City` construite à partir des coordonnées d'origine
+ * plutôt que rien : l'utilisateur obtient la météo de sa position réelle.
+ */
+export async function reverseGeocode(latitude: number, longitude: number): Promise<City | null> {
+  const url = buildUrl("https://api.bigdatacloud.net/data/reverse-geocode-client", {
+    latitude: latitude.toFixed(4),
+    longitude: longitude.toFixed(4),
+    localityLanguage: "fr",
+  });
+
+  const data = await fetchJson<RawReverseGeocodeResponse>(
+    url,
+    REVALIDATE.geocoding,
+    "de géolocalisation",
+  );
+
+  // `city` est vide en zone rurale ; `locality` prend alors le relais.
+  const name = data.city?.trim() || data.locality?.trim();
+  if (!name) return null;
+
+  // Le nom est réinjecté dans Open-Meteo pour récupérer les métadonnées complètes.
+  // On ne garde le résultat que s'il désigne bien le même endroit : un homonyme
+  // lointain donnerait la météo d'une autre ville que celle où se trouve l'utilisateur.
+  const resolved = await resolveCity(name);
+  const isNearby =
+    resolved !== null &&
+    Math.abs(resolved.latitude - latitude) < 0.75 &&
+    Math.abs(resolved.longitude - longitude) < 0.75;
+
+  if (isNearby) return resolved;
+
+  return {
+    // Identifiant dérivé des coordonnées : stable pour un même point, ce qui
+    // permet aux favoris de reconnaître la ville d'une visite à l'autre.
+    id: Math.round(latitude * 1000) * 100000 + Math.round(longitude * 1000),
+    name,
+    country: data.countryName ?? "—",
+    countryCode: data.countryCode ?? "",
+    admin1: data.principalSubdivision || undefined,
+    latitude,
+    longitude,
+    timezone: "auto",
+  };
 }
 
 /* -------------------------------------------------------------------------- */
@@ -205,7 +266,7 @@ const DAILY_FIELDS = [
 
 /**
  * Récupère conditions actuelles, prévisions horaires et prévisions à 7 jours
- * en **un seul appel réseau** — Open-Meteo accepte les trois blocs simultanément.
+ * en **un seul appel réseau** - Open-Meteo accepte les trois blocs simultanément.
  */
 export async function getWeather(
   latitude: number,

@@ -5,7 +5,7 @@
  *
  * Le store est déclaré au niveau du module : tous les composants qui appellent
  * `useFavorites()` observent la même instance et se re-rendent ensemble. Aucun
- * `<Provider>` n'est donc nécessaire — le layout racine reste un Server Component
+ * `<Provider>` n'est donc nécessaire - le layout racine reste un Server Component
  * intégral, et seuls les composants réellement interactifs basculent côté client.
  */
 
@@ -14,7 +14,7 @@ import { createStorageStore } from "@/lib/storage-store";
 import { useHydrated } from "@/lib/use-hydrated";
 import type { City, FavoriteCity } from "@/lib/types";
 
-/** Instantané serveur et valeur de repli — constante partagée, donc stable. */
+/** Instantané serveur et valeur de repli - constante partagée, donc stable. */
 const EMPTY: FavoriteCity[] = [];
 
 /**
