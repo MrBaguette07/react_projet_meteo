@@ -13,6 +13,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { SearchBar } from "@/components/SearchBar";
 import { FavoritesSection } from "@/components/FavoritesSection";
+import { HistorySection } from "@/components/HistorySection";
 import { TemperatureScaleLegend } from "@/components/TemperatureScaleLegend";
 import { cityHref } from "@/lib/format";
 
@@ -42,7 +43,7 @@ export default function HomePage() {
           </p>
 
           <div className="mt-7 max-w-xl">
-            <SearchBar autoFocus size="lg" />
+            <SearchBar autoFocus size="lg" showGeolocation />
           </div>
 
           <div className="mt-4 flex flex-wrap items-center gap-1.5">
@@ -57,6 +58,8 @@ export default function HomePage() {
 
         <TemperatureScaleLegend />
       </section>
+
+      <HistorySection />
 
       <FavoritesSection />
     </div>

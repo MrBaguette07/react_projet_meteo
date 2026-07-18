@@ -140,6 +140,31 @@ export interface FavoriteCity {
 }
 
 /* -------------------------------------------------------------------------- */
+/*                                 Historique                                 */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Une ville consultée, conservée dans l'historique.
+ *
+ * Structurellement proche de `FavoriteCity`, mais sémantiquement distincte : un
+ * favori est choisi et permanent, une visite est enregistrée automatiquement et
+ * finit par sortir de la liste. Les garder séparés évite qu'une évolution de l'un
+ * n'impose une migration du stockage de l'autre.
+ */
+export interface VisitedCity {
+  id: number;
+  name: string;
+  country: string;
+  countryCode: string;
+  admin1?: string;
+  latitude: number;
+  longitude: number;
+  timezone: string;
+  /** Horodatage epoch de la dernière consultation. */
+  visitedAt: number;
+}
+
+/* -------------------------------------------------------------------------- */
 /*                          Réponses brutes Open-Meteo                         */
 /* -------------------------------------------------------------------------- */
 

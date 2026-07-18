@@ -22,6 +22,7 @@ import { SunPath } from "@/components/SunPath";
 import { AirQualityCard } from "@/components/AirQualityCard";
 import { CityMap } from "@/components/CityMap";
 import { CityHeader } from "@/components/CityHeader";
+import { VisitRecorder } from "@/components/VisitRecorder";
 
 interface PageProps {
   params: Promise<{ nom: string }>;
@@ -91,6 +92,9 @@ export default async function CityPage({ params, searchParams }: PageProps) {
 
   return (
     <div className="space-y-6">
+      {/* Sans rendu : enregistre la consultation dans l'historique côté client. */}
+      <VisitRecorder city={city} />
+
       <CityHeader city={city} />
 
       <CurrentConditions
