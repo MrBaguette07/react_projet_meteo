@@ -19,8 +19,9 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Loader2, MapPin, Search } from "lucide-react";
+import { Loader2, LocateFixed, MapPin, Search } from "lucide-react";
 import type { GeocodingApiResponse } from "@/app/api/geocoding/route";
+import { useGeolocation } from "@/lib/use-geolocation";
 import {
   Command,
   CommandEmpty,
@@ -48,6 +49,11 @@ interface SearchBarProps {
   autoFocus?: boolean;
   /** Agrandit le champ, pour l'usage en élément principal de la page d'accueil. */
   size?: "default" | "lg";
+  /**
+   * Affiche le bouton « Autour de moi ».
+   * Désactivé là où la géolocalisation n'a pas de sens — la page 404 par exemple.
+   */
+  showGeolocation?: boolean;
   className?: string;
 }
 
@@ -56,9 +62,11 @@ export function SearchBar({
   placeholder = "Rechercher une ville…",
   autoFocus = false,
   size = "default",
+  showGeolocation = false,
   className,
 }: SearchBarProps) {
   const router = useRouter();
+  const { isLocating, error: geolocationError, locate, clearError } = useGeolocation();
 
   const [query, setQuery] = useState("");
   const [isOpen, setIsOpen] = useState(false);
@@ -146,6 +154,16 @@ export function SearchBar({
     [onSelect, router],
   );
 
+  /**
+   * Localise l'utilisateur puis applique le même traitement qu'une sélection
+   * manuelle : la ville trouvée suit exactement le chemin d'une ville cherchée.
+   */
+  const selectCurrentPosition = useCallback(async () => {
+    setIsOpen(false);
+    const city = await locate();
+    if (city) selectCity(city);
+  }, [locate, selectCity]);
+
   const showPopover = isOpen && isQueryLongEnough;
 
   return (
@@ -190,16 +208,44 @@ export function SearchBar({
               placeholder={placeholder}
               aria-label="Rechercher une ville"
               className={cn(
-                "bg-card pl-10 pr-10 [&::-webkit-search-cancel-button]:hidden",
+                "bg-card pl-10 [&::-webkit-search-cancel-button]:hidden",
+                // Réserve la place du bouton de localisation quand il est affiché.
+                showGeolocation ? "pr-20" : "pr-10",
                 size === "lg" && "h-12 text-base md:text-base",
               )}
             />
 
             {isLoading && (
               <Loader2
-                className="absolute right-3.5 top-1/2 size-4 -translate-y-1/2 animate-spin text-muted-foreground"
+                className={cn(
+                  "absolute top-1/2 size-4 -translate-y-1/2 animate-spin text-muted-foreground",
+                  showGeolocation ? "right-12" : "right-3.5",
+                )}
                 aria-hidden="true"
               />
+            )}
+
+            {showGeolocation && (
+              <button
+                type="button"
+                onClick={selectCurrentPosition}
+                disabled={isLocating}
+                aria-label="Utiliser ma position actuelle"
+                title="Utiliser ma position actuelle"
+                className={cn(
+                  "absolute right-1.5 top-1/2 flex size-8 -translate-y-1/2 items-center justify-center rounded-md",
+                  "text-muted-foreground transition-colors hover:bg-muted hover:text-foreground",
+                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                  "disabled:pointer-events-none disabled:opacity-50",
+                  size === "lg" && "size-9",
+                )}
+              >
+                {isLocating ? (
+                  <Loader2 className="size-4 animate-spin" aria-hidden="true" />
+                ) : (
+                  <LocateFixed className="size-4" aria-hidden="true" />
+                )}
+              </button>
             )}
           </div>
         </PopoverAnchor>
@@ -254,6 +300,28 @@ export function SearchBar({
           </CommandList>
         </PopoverContent>
       </Popover>
+
+      {/*
+        Rendu hors du popover : une localisation refusée doit rester lisible même
+        quand la liste de suggestions est fermée. `role="alert"` l'annonce
+        immédiatement aux lecteurs d'écran.
+      */}
+      {geolocationError && (
+        <p
+          role="alert"
+          className="mt-2 flex items-start justify-between gap-2 rounded-md border border-destructive/25 bg-destructive/5 px-3 py-2 text-xs text-destructive"
+        >
+          {geolocationError}
+          <button
+            type="button"
+            onClick={clearError}
+            aria-label="Masquer le message"
+            className="shrink-0 font-medium underline underline-offset-2"
+          >
+            Fermer
+          </button>
+        </p>
+      )}
     </Command>
   );
 }
