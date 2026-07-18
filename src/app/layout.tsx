@@ -1,18 +1,3 @@
-/**
- * Layout racine - Server Component intégral.
- *
- * Aucun fournisseur d'état n'est nécessaire : les favoris vivent dans un store
- * externe consommé via `useSyncExternalStore` (voir `src/lib/favorites.ts`). La
- * frontière client est donc repoussée au plus près des composants réellement
- * interactifs, et l'en-tête comme le pied de page n'envoient aucun JavaScript.
- *
- * Trois familles typographiques sont chargées, une par rôle : IBM Plex Sans
- * Condensed pour les titres et les grands relevés, IBM Plex Sans pour le texte
- * courant, IBM Plex Mono pour toutes les données chiffrées et les intitulés de
- * champ. Plex a été dessiné pour des contextes techniques : c'est exactement le
- * registre d'une feuille d'observation météo.
- */
-
 import type { Metadata, Viewport } from "next";
 import { IBM_Plex_Mono, IBM_Plex_Sans, IBM_Plex_Sans_Condensed } from "next/font/google";
 import "./globals.css";
@@ -41,7 +26,6 @@ const plexMono = IBM_Plex_Mono({
 export const metadata: Metadata = {
   title: {
     default: "Météo - relevés, prévisions et comparateur de villes",
-    // Les pages de ville complètent ce gabarit (ex. « Lyon - Météo »).
     template: "%s - Météo",
   },
   description:

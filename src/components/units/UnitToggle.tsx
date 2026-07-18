@@ -1,28 +1,12 @@
 "use client";
 
-/**
- * Bascule entre le système métrique et le système impérial.
- *
- * Présentée comme un interrupteur segmenté à deux positions plutôt qu'un bouton
- * unique : l'état courant et l'état disponible sont visibles simultanément, sans
- * avoir à déduire ce que produirait un clic.
- *
- * Le groupe porte `role="group"` et chaque bouton `aria-pressed`, ce qui annonce
- * aux lecteurs d'écran laquelle des deux options est active.
- *
- * Avant l'hydratation, la préférence réelle est inconnue : le composant rend alors
- * une zone inerte de mêmes dimensions. Cela évite d'annoncer brièvement « °C »
- * actif à un utilisateur ayant choisi « °F », et empêche tout décalage de mise en
- * page à l'arrivée du JavaScript.
- */
-
 import type { UnitSystem } from "@/lib/units";
 import { useUnits } from "@/lib/units";
 import { cn } from "@/lib/utils";
 
 const OPTIONS: ReadonlyArray<{ system: UnitSystem; label: string; hint: string }> = [
-  { system: "metric", label: "°C", hint: "Système métrique — degrés Celsius, km/h, mm, hPa" },
-  { system: "imperial", label: "°F", hint: "Système impérial — degrés Fahrenheit, mph, in, inHg" },
+  { system: "metric", label: "°C", hint: "Système métrique - degrés Celsius, km/h, mm, hPa" },
+  { system: "imperial", label: "°F", hint: "Système impérial - degrés Fahrenheit, mph, in, inHg" },
 ];
 
 export function UnitToggle({ className }: { className?: string }) {

@@ -1,15 +1,5 @@
 "use client";
 
-/**
- * Vignette d'une ville favorite : relevé courant résumé et accès à la fiche.
- *
- * Chaque carte charge sa propre météo via `useCityWeather`, dont le cache partagé
- * garantit qu'une ville présente à la fois dans les favoris et dans le comparateur
- * n'est téléchargée qu'une fois.
- *
- * Le filet coloré en tête de carte reprend la température : la grille des favoris
- * se lit comme une bande de température avant même d'être déchiffrée.
- */
 
 import Link from "next/link";
 import { X } from "lucide-react";

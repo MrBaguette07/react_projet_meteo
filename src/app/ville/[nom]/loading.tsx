@@ -1,11 +1,3 @@
-/**
- * État de chargement de la page de détail.
- *
- * Next.js l'affiche automatiquement pendant la résolution du Server Component.
- * Le squelette reprend la géométrie exacte de la page finale afin que le contenu
- * réel se substitue sans déplacer les éléments déjà visibles.
- */
-
 import { Skeleton } from "@/components/ui/skeleton";
 
 export default function Loading() {

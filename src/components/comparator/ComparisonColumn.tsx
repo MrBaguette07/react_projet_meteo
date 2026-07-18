@@ -1,13 +1,5 @@
 "use client";
 
-/**
- * Colonne du comparateur : une ville, son relevé courant et son indice de confort
- * jour par jour.
- *
- * Le composant reste autonome - il déclenche lui-même son chargement - pour que
- * l'ajout d'une ville n'oblige pas à recharger les colonnes déjà affichées.
- */
-
 import Link from "next/link";
 import { useEffect, useMemo } from "react";
 import { ArrowRight, Trophy, X } from "lucide-react";
@@ -25,25 +17,19 @@ import { Precipitation, Temperature, WindSpeed } from "@/components/units/Measur
 import { cn } from "@/lib/utils";
 import type { City } from "@/lib/types";
 
-/** Indice de confort d'une ville, remonté au parent pour établir le verdict. */
 export interface CityScore {
   cityId: number;
-  /** Moyenne des scores journaliers, sur 100. */
   averageScore: number;
-  /** Score de chaque jour, dans l'ordre des prévisions. */
   dailyScores: number[];
 }
 
 interface ComparisonColumnProps {
   city: City;
-  /** `true` si cette ville obtient la meilleure moyenne du comparatif. */
   isWinner: boolean;
   onRemove: (cityId: number) => void;
-  /** Remonte les scores calculés ; `null` tant que la météo n'est pas chargée. */
   onScored: (cityId: number, score: CityScore | null) => void;
 }
 
-/** Couleur de la barre de score, sur la même échelle qualitative que le reste. */
 function scoreColor(score: number): string {
   if (score >= 75) return "bg-emerald-500";
   if (score >= 55) return "bg-lime-500";
@@ -54,15 +40,12 @@ function scoreColor(score: number): string {
 export function ComparisonColumn({ city, isWinner, onRemove, onScored }: ComparisonColumnProps) {
   const { weather, isLoading, error } = useCityWeather(city.latitude, city.longitude);
 
-  // Les scores sont dérivés de la météo une seule fois : l'histogramme ci-dessous
-  // et le verdict remonté au parent s'appuient sur exactement les mêmes valeurs.
   const score = useMemo<CityScore | null>(() => {
     if (!weather) return null;
 
     const dailyScores = weather.daily.map((day) =>
       computeComfortScore({
         weatherCode: day.weatherCode,
-        // La moyenne min/max représente mieux la journée vécue que le seul maximum.
         temperature: (day.temperatureMax + day.temperatureMin) / 2,
         windSpeed: day.windSpeedMax,
         precipitationProbability: day.precipitationProbabilityMax,
@@ -78,8 +61,6 @@ export function ComparisonColumn({ city, isWinner, onRemove, onScored }: Compari
     };
   }, [weather, city.id]);
 
-  // Remontée au parent, et invalidation au démontage pour qu'une ville retirée
-  // ne continue pas de peser dans le verdict.
   useEffect(() => {
     onScored(city.id, score);
     return () => onScored(city.id, null);

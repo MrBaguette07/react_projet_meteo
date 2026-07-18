@@ -1,14 +1,3 @@
-/**
- * Bande horizontale des 24 prochaines heures.
- *
- * La courbe de température est tracée en SVG à partir des données, sans librairie
- * de graphes : les valeurs sont normalisées sur l'amplitude réelle de la période,
- * ce qui rend les variations lisibles même par temps stable.
- *
- * Le tracé n'est pas d'une couleur unique - chaque segment prend la teinte de sa
- * température. La courbe devient ainsi sa propre légende : on voit la journée se
- * réchauffer puis se refroidir.
- */
 
 import { Card, CardContent } from "@/components/ui/card";
 import { SectionHeading } from "@/components/Metric";
@@ -19,17 +8,13 @@ import { formatTime } from "@/lib/format";
 import { Temperature } from "@/components/units/Measurement";
 import type { HourlyForecast } from "@/lib/types";
 
-/** Hauteur du tracé, en unités du `viewBox`. */
 const CHART_HEIGHT = 44;
-/** Espacement horizontal entre deux points, aligné sur la largeur des colonnes. */
 const COLUMN_WIDTH = 62;
 
 export function HourlyStrip({ hours }: { hours: HourlyForecast[] }) {
   const temperatures = hours.map((hour) => hour.temperature);
   const min = Math.min(...temperatures);
   const max = Math.max(...temperatures);
-  // Amplitude plancher de 1 °C : évite une division par zéro et l'aplatissement
-  // du tracé lorsque la température ne bouge pas de la journée.
   const range = Math.max(1, max - min);
 
   const points = temperatures.map((temperature, index) => ({

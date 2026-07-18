@@ -1,9 +1,3 @@
-/**
- * En-tête de navigation, partagé par toutes les pages via le layout racine.
- *
- * Server Component : purement déclaratif, il n'embarque aucun JavaScript client.
- */
-
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { UnitToggle } from "@/components/units/UnitToggle";

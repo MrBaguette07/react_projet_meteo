@@ -1,19 +1,9 @@
-/**
- * Route Handler météo : `GET /api/weather?lat=48.85&lon=2.35`
- *
- * Les favoris vivent dans le `localStorage` : le serveur ne les connaît pas et ne
- * peut donc pas pré-rendre leurs vignettes. Cette route permet au composant client
- * de récupérer la météo tout en **réutilisant le cache serveur** - deux visiteurs
- * ayant Paris en favori ne déclenchent qu'un seul appel à Open-Meteo.
- */
-
 import { NextResponse } from "next/server";
 import { getWeather, OpenMeteoError } from "@/lib/api/open-meteo";
 import type { WeatherBundle } from "@/lib/types";
 
 export type WeatherApiResponse = WeatherBundle;
 
-/** Valide une coordonnée : nombre fini et dans les bornes géographiques. */
 function parseCoordinate(raw: string | null, max: number): number | null {
   if (raw === null) return null;
   const value = Number(raw);

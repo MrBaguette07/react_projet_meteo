@@ -1,20 +1,5 @@
 "use client";
 
-/**
- * Comparateur de villes - la fonctionnalité originale de l'application.
- *
- * Chaque ville sélectionnée reçoit un **indice de confort sur 100**, calculé par
- * `computeComfortScore()` à partir de l'état du ciel, de la température, du vent
- * et du risque de pluie sur sept jours. Le comparateur désigne ensuite la ville
- * offrant la meilleure moyenne : là où les applications météo classiques laissent
- * l'utilisateur interpréter des chiffres bruts, celle-ci répond directement à la
- * question « où fera-t-il le plus beau cette semaine ? ».
- *
- * La sélection est persistée dans le `sessionStorage` : revenir depuis une fiche
- * ville ne la perd pas, mais elle n'encombre pas le stockage à long terme, réservé
- * aux favoris.
- */
-
 import { useCallback, useMemo, useState, useSyncExternalStore } from "react";
 import { Plus, Trophy } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
@@ -26,13 +11,10 @@ import { createStorageStore } from "@/lib/storage-store";
 import { countryFlag } from "@/lib/format";
 import type { City, FavoriteCity } from "@/lib/types";
 
-/** Au-delà de quatre colonnes, la grille devient illisible sur un écran d'ordinateur. */
 const MAX_CITIES = 4;
 
-/** Instantané serveur et valeur de repli - constante partagée, donc stable. */
 const NO_CITIES: City[] = [];
 
-/** Valide la sélection restaurée : une entrée corrompue est simplement ignorée. */
 function parseSelection(raw: string): City[] {
   const parsed: unknown = JSON.parse(raw);
   if (!Array.isArray(parsed)) return NO_CITIES;
@@ -58,7 +40,6 @@ const selectionStore = createStorageStore<City[]>({
   fallback: NO_CITIES,
 });
 
-/** Convertit un favori en `City` pour l'ajouter au comparatif. */
 function favoriteToCity(favorite: FavoriteCity): City {
   return {
     id: favorite.id,
@@ -81,7 +62,6 @@ export function CityComparator() {
     selectionStore.getServerSnapshot,
   );
 
-  /** Scores remontés par chaque colonne, indexés par identifiant de ville. */
   const [scores, setScores] = useState<Record<number, CityScore | null>>({});
 
   const addCity = useCallback((city: City) => {
@@ -95,9 +75,6 @@ export function CityComparator() {
     selectionStore.set(selectionStore.getSnapshot().filter((city) => city.id !== cityId));
   }, []);
 
-  // `useCallback` est indispensable ici : cette fonction est une dépendance de
-  // l'effet de chaque colonne, et une nouvelle référence à chaque rendu
-  // provoquerait une boucle de mises à jour.
   const handleScored = useCallback((cityId: number, score: CityScore | null) => {
     setScores((current) => {
       if (current[cityId] === score) return current;
@@ -105,28 +82,23 @@ export function CityComparator() {
     });
   }, []);
 
-  /** Ville en tête du comparatif ; `null` tant que toutes les colonnes ne sont pas chargées. */
   const winnerId = useMemo(() => {
     const ranked = cities
       .map((city) => scores[city.id])
       .filter((score): score is CityScore => score != null);
 
-    // On attend d'avoir toutes les données, et au moins deux villes : désigner un
-    // gagnant sur un comparatif incomplet serait trompeur.
     if (ranked.length < 2 || ranked.length !== cities.length) return null;
 
     const best = ranked.reduce((leader, score) =>
       score.averageScore > leader.averageScore ? score : leader,
     );
 
-    // Égalité parfaite entre toutes les villes : aucun gagnant à mettre en avant.
     const isTie = ranked.every((score) => score.averageScore === best.averageScore);
     return isTie ? null : best.cityId;
   }, [cities, scores]);
 
   const winner = cities.find((city) => city.id === winnerId) ?? null;
 
-  /** Favoris pas encore présents dans le comparatif, proposés en ajout rapide. */
   const suggestibleFavorites = favorites.filter(
     (favorite) => !cities.some((city) => city.id === favorite.id),
   );

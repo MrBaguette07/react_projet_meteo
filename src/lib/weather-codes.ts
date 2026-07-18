@@ -1,12 +1,3 @@
-/**
- * Traduction des codes météo WMO 4677 utilisés par Open-Meteo.
- *
- * Chaque code est associé à un libellé français et à un `icon` symbolique.
- * Le composant `<WeatherIcon />` se charge du rendu graphique : aucune image
- * externe n'est nécessaire, les icônes sont des SVG inline.
- */
-
-/** Jeu d'icônes disponibles dans `<WeatherIcon />`. */
 export type WeatherIconName =
   | "clear"
   | "partly-cloudy"
@@ -55,18 +46,10 @@ const WEATHER_CODES: Record<number, WeatherDescription> = {
 
 const UNKNOWN: WeatherDescription = { label: "Conditions inconnues", icon: "cloudy" };
 
-/** Retourne le libellé et l'icône associés à un code WMO. */
 export function describeWeather(code: number): WeatherDescription {
   return WEATHER_CODES[code] ?? UNKNOWN;
 }
 
-/**
- * Score de « beau temps » sur 100, utilisé par le comparateur de villes.
- *
- * Il combine trois pénalités indépendantes plutôt qu'une moyenne pondérée :
- * une journée peut être disqualifiée par un seul facteur extrême (orage, canicule),
- * ce qu'une moyenne aurait lissé.
- */
 export function computeComfortScore(params: {
   weatherCode: number;
   temperature: number;
@@ -75,7 +58,6 @@ export function computeComfortScore(params: {
 }): number {
   const { weatherCode, temperature, windSpeed, precipitationProbability } = params;
 
-  // Pénalité liée à l'état du ciel.
   const icon = describeWeather(weatherCode).icon;
   const skyPenalty: Record<WeatherIconName, number> = {
     clear: 0,
@@ -88,15 +70,11 @@ export function computeComfortScore(params: {
     thunderstorm: 48,
   };
 
-  // Pénalité de température : l'optimum est fixé à 22 °C, avec une zone
-  // de confort de ±4 °C avant que la pénalité ne commence à courir.
   const deltaTemp = Math.max(0, Math.abs(temperature - 22) - 4);
   const tempPenalty = Math.min(40, deltaTemp * 2.6);
 
-  // Pénalité de vent : négligeable en dessous de 15 km/h.
   const windPenalty = Math.min(15, Math.max(0, windSpeed - 15) * 0.4);
 
-  // Pénalité de pluie, proportionnelle à la probabilité annoncée.
   const rainPenalty = (precipitationProbability / 100) * 18;
 
   const score = 100 - skyPenalty[icon] - tempPenalty - windPenalty - rainPenalty;

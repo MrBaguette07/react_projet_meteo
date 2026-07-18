@@ -1,11 +1,3 @@
-/**
- * Page du comparateur de villes (`/comparer`).
- *
- * Server Component réduit à sa plus simple expression : il porte les métadonnées et
- * l'introduction statique, puis délègue à `<CityComparator />`, dont l'interactivité
- * (sélection, scores, verdict) impose le rendu client.
- */
-
 import type { Metadata } from "next";
 import { CityComparator } from "@/components/comparator/CityComparator";
 

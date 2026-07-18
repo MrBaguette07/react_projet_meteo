@@ -1,22 +1,5 @@
 "use client";
 
-/**
- * Recherche de villes avec suggestions en temps réel.
- *
- * Construite sur `Command` (cmdk) et `Popover` de shadcn/ui, qui apportent la
- * sémantique ARIA `combobox`/`listbox` et la navigation clavier. Le filtrage
- * intégré de cmdk est **désactivé** (`shouldFilter={false}`) : les résultats
- * viennent du serveur de géocodage, les refiltrer côté client masquerait des
- * correspondances pertinentes (« Lyon » proposé pour « lyo » par exemple).
- *
- * Trois mécanismes limitent le trafic réseau :
- *  - un **debounce** de 280 ms, qui laisse passer la frappe avant d'interroger l'API ;
- *  - un **cache mémoire** (`Map` conservée entre les rendus via `useRef`), qui rend
- *    instantanée toute requête déjà vue - typiquement lorsqu'on efface un caractère ;
- *  - un **AbortController**, qui annule la requête précédente afin qu'une réponse
- *    lente arrivant après une plus récente n'écrase pas les suggestions affichées.
- */
-
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Loader2, LocateFixed, MapPin, Search } from "lucide-react";
@@ -39,20 +22,10 @@ const DEBOUNCE_MS = 280;
 const MIN_QUERY_LENGTH = 2;
 
 interface SearchBarProps {
-  /**
-   * Comportement à la sélection d'une ville.
-   * Par défaut, on navigue vers sa page de détail ; le comparateur, lui,
-   * ajoute la ville à sa sélection sans quitter la page.
-   */
   onSelect?: (city: City) => void;
   placeholder?: string;
   autoFocus?: boolean;
-  /** Agrandit le champ, pour l'usage en élément principal de la page d'accueil. */
   size?: "default" | "lg";
-  /**
-   * Affiche le bouton « Autour de moi ».
-   * Désactivé là où la géolocalisation n'a pas de sens — la page 404 par exemple.
-   */
   showGeolocation?: boolean;
   className?: string;
 }
@@ -71,11 +44,6 @@ export function SearchBar({
   const [query, setQuery] = useState("");
   const [isOpen, setIsOpen] = useState(false);
 
-  /**
-   * Résultats, chargement et erreur forment un seul état : ils changent toujours
-   * ensemble, et les regrouper interdit par construction les combinaisons
-   * incohérentes du type « en cours de chargement ET en erreur ».
-   */
   const [search, setSearch] = useState<{
     results: City[];
     isLoading: boolean;
@@ -86,9 +54,6 @@ export function SearchBar({
   const cacheRef = useRef(new Map<string, City[]>());
   const abortRef = useRef<AbortController | null>(null);
 
-  // Recherche débouncée. Aucun `setState` n'est appelé dans le corps de l'effet :
-  // tout passe par le callback du timer, ce qui évite un rendu en cascade au montage.
-  // Le nettoyage annule à la fois le timer et la requête encore en vol.
   useEffect(() => {
     const trimmed = query.trim();
     if (trimmed.length < MIN_QUERY_LENGTH) return;
@@ -96,7 +61,6 @@ export function SearchBar({
     const timer = setTimeout(async () => {
       const key = trimmed.toLowerCase();
 
-      // Requête déjà vue - typiquement après l'effacement d'un caractère.
       const cached = cacheRef.current.get(key);
       if (cached) {
         setSearch({ results: cached, isLoading: false, error: null });
@@ -118,8 +82,6 @@ export function SearchBar({
         cacheRef.current.set(key, data.results);
         setSearch({ results: data.results, isLoading: false, error: null });
       } catch (cause) {
-        // Une annulation volontaire n'est pas une erreur à signaler à l'utilisateur :
-        // une requête plus récente est déjà en cours et produira l'affichage final.
         if (cause instanceof DOMException && cause.name === "AbortError") return;
         setSearch({ results: [], isLoading: false, error: "Recherche momentanément indisponible." });
       }
@@ -131,8 +93,6 @@ export function SearchBar({
     };
   }, [query]);
 
-  // Sous le seuil de déclenchement, la liste est vide et rien ne charge - inutile
-  // de le réécrire dans l'état, la valeur se déduit de la saisie courante.
   const isQueryLongEnough = query.trim().length >= MIN_QUERY_LENGTH;
   const results = isQueryLongEnough ? search.results : [];
   const isLoading = isQueryLongEnough && search.isLoading;
@@ -144,7 +104,6 @@ export function SearchBar({
       if (onSelect) {
         setQuery("");
         onSelect(city);
-        // Le champ garde le focus : le comparateur invite à enchaîner les ajouts.
         inputRef.current?.focus();
       } else {
         setQuery(city.name);
@@ -154,10 +113,6 @@ export function SearchBar({
     [onSelect, router],
   );
 
-  /**
-   * Localise l'utilisateur puis applique le même traitement qu'une sélection
-   * manuelle : la ville trouvée suit exactement le chemin d'une ville cherchée.
-   */
   const selectCurrentPosition = useCallback(async () => {
     setIsOpen(false);
     const city = await locate();
@@ -167,17 +122,6 @@ export function SearchBar({
   const showPopover = isOpen && isQueryLongEnough;
 
   return (
-    /**
-     * Le champ est rendu **à l'intérieur** de `Command`, et non dans le popover.
-     *
-     * cmdk installe son gestionnaire de touches sur sa racine : les flèches et
-     * Entrée frappées dans le champ y remontent donc naturellement et pilotent la
-     * liste, sans avoir à recâbler quoi que ce soit. Le popover étant rendu dans
-     * un portail, seul le DOM est déplacé - l'arbre React, lui, reste intact, si
-     * bien que le contexte et la propagation des évènements continuent de
-     * fonctionner. Les styles de conteneur de `Command` sont neutralisés puisque
-     * la surface visible est celle du popover.
-     */
     <Command
       shouldFilter={false}
       loop
@@ -209,7 +153,6 @@ export function SearchBar({
               aria-label="Rechercher une ville"
               className={cn(
                 "bg-card pl-10 [&::-webkit-search-cancel-button]:hidden",
-                // Réserve la place du bouton de localisation quand il est affiché.
                 showGeolocation ? "pr-20" : "pr-10",
                 size === "lg" && "h-12 text-base md:text-base",
               )}
@@ -254,8 +197,6 @@ export function SearchBar({
           align="start"
           sideOffset={6}
           className="w-(--radix-popover-trigger-width) p-1"
-          // Le focus reste dans le champ : l'utilisateur continue de taper pendant
-          // que la liste se met à jour sous ses yeux.
           onOpenAutoFocus={(event) => event.preventDefault()}
         >
           <CommandList className="max-h-72">

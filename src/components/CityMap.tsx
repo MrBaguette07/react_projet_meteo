@@ -1,16 +1,7 @@
-/**
- * Localisation de la ville sur une carte OpenStreetMap.
- *
- * On utilise l'`<iframe>` d'embarquement d'OpenStreetMap plutôt qu'une librairie
- * cartographique : aucune clé d'API n'est requise, et le poids envoyé au client
- * reste nul côté JavaScript (le composant demeure un Server Component).
- */
-
 import { Card, CardContent } from "@/components/ui/card";
 import { SectionHeading } from "@/components/Metric";
 import type { City } from "@/lib/types";
 
-/** Demi-largeur de la fenêtre cartographique, en degrés (~11 km à l'équateur). */
 const BBOX_DELTA = 0.1;
 
 export function CityMap({ city }: { city: City }) {

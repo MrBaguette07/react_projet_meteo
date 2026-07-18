@@ -1,29 +1,9 @@
-/**
- * Icônes météo en SVG inline.
- *
- * Server Component : aucune interactivité, donc rien à envoyer au client. Le SVG
- * inline évite une requête réseau par icône et laisse les dégradés suivre la
- * palette de l'application.
- *
- * Les dégradés sont déclarés **une seule fois** par `<WeatherIconDefs />`, monté
- * dans le layout racine. Les inclure dans chaque icône dupliquerait les mêmes `id`
- * des dizaines de fois dans le document - un HTML invalide, dont le rendu casserait
- * dès que la première occurrence serait démontée.
- */
-
 import type { WeatherIconName } from "@/lib/weather-codes";
 
-/** Identifiants des dégradés partagés, préfixés pour éviter toute collision. */
 const SUN_GRADIENT = "wi-sun";
 const MOON_GRADIENT = "wi-moon";
 const CLOUD_GRADIENT = "wi-cloud";
 
-/**
- * Dégradés partagés par toutes les icônes.
- *
- * À monter une fois près de la racine du document. Le SVG est de taille nulle et
- * masqué aux technologies d'assistance : il ne sert que de bibliothèque de peintures.
- */
 export function WeatherIconDefs() {
   return (
     <svg width="0" height="0" aria-hidden="true" focusable="false" className="absolute">
@@ -47,21 +27,11 @@ export function WeatherIconDefs() {
 
 interface WeatherIconProps {
   name: WeatherIconName;
-  /** Bascule le soleil en lune pour les conditions nocturnes. */
   isDay?: boolean;
-  /** Taille en pixels (l'icône est carrée). */
   size?: number;
   className?: string;
 }
 
-/**
- * Astre principal : soleil le jour, lune la nuit.
- *
- * Les rayons sont peints en couleur unie et non avec le dégradé du disque : un
- * `linearGradient` en unités `objectBoundingBox` - le défaut SVG - n'a pas de
- * surface de référence sur un segment vertical de largeur nulle, et le trait ne
- * serait tout simplement pas rendu.
- */
 function Luminary({ isDay }: { isDay: boolean }) {
   if (!isDay) {
     return (
@@ -91,7 +61,6 @@ function Luminary({ isDay }: { isDay: boolean }) {
   );
 }
 
-/** Silhouette de nuage réutilisée par la plupart des conditions. */
 function Cloud({ opacity = 1 }: { opacity?: number }) {
   return (
     <path
@@ -102,7 +71,6 @@ function Cloud({ opacity = 1 }: { opacity?: number }) {
   );
 }
 
-/** Gouttes ou flocons sous le nuage, positionnés régulièrement. */
 function Drops({ variant }: { variant: "rain" | "drizzle" | "snow" }) {
   const offsets = variant === "drizzle" ? [9.5, 14.5] : [8.5, 12, 15.5];
 

@@ -1,14 +1,3 @@
-/**
- * Page d'accueil (Server Component).
- *
- * L'en-tête et les raccourcis sont rendus côté serveur ; seuls la barre de
- * recherche et la grille des favoris - qui dépendent du `localStorage` et de la
- * saisie utilisateur - sont des Client Components.
- *
- * La recherche est traitée comme l'élément principal de la page plutôt qu'un
- * accessoire posé sous un slogan : c'est l'action par laquelle tout commence ici.
- */
-
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { SearchBar } from "@/components/SearchBar";
@@ -17,7 +6,6 @@ import { HistorySection } from "@/components/HistorySection";
 import { TemperatureScaleLegend } from "@/components/TemperatureScaleLegend";
 import { cityHref } from "@/lib/format";
 
-/** Quelques villes proposées, pour permettre un premier essai sans rien saisir. */
 const SUGGESTED_CITIES = [
   { name: "Paris", latitude: 48.8566, longitude: 2.3522 },
   { name: "Marseille", latitude: 43.2965, longitude: 5.3698 },

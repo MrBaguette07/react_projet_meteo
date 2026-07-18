@@ -1,13 +1,3 @@
-/**
- * Légende de l'échelle chromatique de température.
- *
- * Toute l'interface encode la température par la couleur ; cette bande en donne
- * la clé, une fois, à l'endroit où l'utilisateur commence sa lecture. Elle a le
- * statut d'une légende de carte : sans elle, le code couleur resterait implicite.
- *
- * Server Component - le dégradé est calculé au rendu, rien n'est envoyé au client.
- */
-
 import { SCALE_TICKS, temperatureGradient } from "@/lib/temperature-scale";
 
 export function TemperatureScaleLegend() {

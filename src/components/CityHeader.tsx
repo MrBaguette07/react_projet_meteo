@@ -1,10 +1,3 @@
-/**
- * En-tête de la page de détail : identité de la ville, bouton favori, recherche.
- *
- * Server Component qui compose deux Client Components (`FavoriteButton`, `SearchBar`).
- * Le titre et le fil d'Ariane restent donc rendus côté serveur.
- */
-
 import Link from "next/link";
 import { ChevronRight, GitCompareArrows } from "lucide-react";
 import { Button } from "@/components/ui/button";

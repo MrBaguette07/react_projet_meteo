@@ -1,11 +1,3 @@
-/**
- * Affiché lorsque `notFound()` est appelé depuis la page de détail, c'est-à-dire
- * quand le géocodage ne reconnaît pas le nom présent dans l'URL.
- *
- * On y replace une barre de recherche : l'utilisateur peut corriger sa saisie
- * sans avoir à revenir en arrière.
- */
-
 import Link from "next/link";
 import { SearchX } from "lucide-react";
 import { Button } from "@/components/ui/button";

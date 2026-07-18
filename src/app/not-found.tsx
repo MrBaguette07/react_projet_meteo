@@ -1,7 +1,3 @@
-/**
- * Page 404 globale, servie pour toute URL ne correspondant à aucune route.
- */
-
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { SearchBar } from "@/components/SearchBar";

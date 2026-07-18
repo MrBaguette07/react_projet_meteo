@@ -1,17 +1,3 @@
-/**
- * Client unique des APIs Open-Meteo (géocodage, prévisions, qualité de l'air).
- *
- * Toute la couche réseau est centralisée ici. Deux conséquences importantes :
- *
- *  1. **Pas de duplication d'appels.** Chaque `fetch` passe par le cache de données
- *     de Next.js (`next.revalidate`). Deux composants serveur qui demandent la météo
- *     de la même ville pendant la fenêtre de revalidation partagent une seule requête
- *     réseau - la déduplication est faite sur l'URL, donc les paramètres sont toujours
- *     construits dans le même ordre via `buildUrl()`.
- *  2. **Erreurs typées.** Les échecs remontent sous forme d'`OpenMeteoError`, ce qui
- *     permet aux `error.tsx` d'afficher un message utile plutôt qu'une trace brute.
- */
-
 import type {
   AirQuality,
   City,
@@ -29,21 +15,12 @@ const GEOCODING_BASE = "https://geocoding-api.open-meteo.com/v1/search";
 const FORECAST_BASE = "https://api.open-meteo.com/v1/forecast";
 const AIR_QUALITY_BASE = "https://air-quality-api.open-meteo.com/v1/air-quality";
 
-/**
- * Durées de cache, en secondes.
- *
- * Le géocodage est quasi immuable (une ville ne se déplace pas) : 24 h.
- * La météo est rafraîchie toutes les 15 min, ce qui correspond à la cadence
- * de mise à jour réelle des modèles côté Open-Meteo - interroger plus souvent
- * ne renverrait que des données identiques.
- */
 const REVALIDATE = {
   geocoding: 60 * 60 * 24,
   weather: 60 * 15,
   airQuality: 60 * 30,
 } as const;
 
-/** Erreur applicative levée quand une API externe est indisponible ou répond mal. */
 export class OpenMeteoError extends Error {
   constructor(
     message: string,
@@ -54,12 +31,6 @@ export class OpenMeteoError extends Error {
   }
 }
 
-/**
- * Construit une URL avec des paramètres triés par clé.
- *
- * Le tri est ce qui garantit qu'une même requête logique produit toujours la même
- * chaîne, et donc la même entrée de cache Next.js.
- */
 function buildUrl(base: string, params: Record<string, string | number | string[]>): string {
   const url = new URL(base);
   for (const key of Object.keys(params).sort()) {
@@ -69,7 +40,6 @@ function buildUrl(base: string, params: Record<string, string | number | string[
   return url.toString();
 }
 
-/** Effectue un `fetch` JSON typé, mis en cache, et convertit les échecs en `OpenMeteoError`. */
 async function fetchJson<T>(url: string, revalidate: number, label: string): Promise<T> {
   let response: Response;
   try {
@@ -88,11 +58,6 @@ async function fetchJson<T>(url: string, revalidate: number, label: string): Pro
   return (await response.json()) as T;
 }
 
-/* -------------------------------------------------------------------------- */
-/*                                  Géocodage                                 */
-/* -------------------------------------------------------------------------- */
-
-/** Normalise un résultat brut de géocodage en `City` applicative. */
 function toCity(raw: RawGeocodingResult): City {
   return {
     id: raw.id,
@@ -108,12 +73,6 @@ function toCity(raw: RawGeocodingResult): City {
   };
 }
 
-/**
- * Recherche des villes par nom (auto-complétion).
- *
- * Renvoie un tableau vide pour une requête trop courte : cela évite d'inonder l'API
- * de requêtes à un ou deux caractères, qui ne retournent de toute façon rien d'utile.
- */
 export async function searchCities(query: string, limit = 8): Promise<City[]> {
   const trimmed = query.trim();
   if (trimmed.length < 2) return [];
@@ -129,12 +88,6 @@ export async function searchCities(query: string, limit = 8): Promise<City[]> {
   return (data.results ?? []).map(toCity);
 }
 
-/**
- * Meilleur candidat pour un nom donné.
- *
- * En cas d'homonymes, on retient la ville la plus peuplée : c'est presque toujours
- * celle que l'utilisateur avait en tête (« Paris » → France, pas Texas).
- */
 async function findBestMatch(name: string): Promise<City | null> {
   const candidates = await searchCities(name, 10);
   if (candidates.length === 0) return null;
@@ -149,14 +102,6 @@ async function findBestMatch(name: string): Promise<City | null> {
   );
 }
 
-/**
- * Résout un nom de ville en une `City` unique - utilisé par la route dynamique
- * `/ville/[nom]` quand l'URL est partagée sans coordonnées.
- *
- * Une seconde tentative remplace les tirets par des espaces : elle rattrape les
- * liens écrits à la main sous la forme `/ville/New-York`, sans pénaliser les
- * communes dont le nom comporte de vrais tirets, essayées en premier.
- */
 export async function resolveCity(name: string): Promise<City | null> {
   const direct = await findBestMatch(name);
   if (direct) return direct;
@@ -164,24 +109,6 @@ export async function resolveCity(name: string): Promise<City | null> {
   return name.includes("-") ? findBestMatch(name.replace(/-/g, " ")) : null;
 }
 
-/* -------------------------------------------------------------------------- */
-/*                            Géocodage inverse                               */
-/* -------------------------------------------------------------------------- */
-
-/**
- * Retrouve la ville correspondant à des coordonnées.
- *
- * Open-Meteo ne propose pas d'endpoint de géocodage inverse : on passe donc par
- * BigDataCloud, dont l'API `client` est gratuite, sans clé et sans quota bloquant.
- * Seul le **nom** de la localité en est extrait ; il est ensuite repassé dans notre
- * propre géocodage afin d'obtenir une `City` complète (identifiant stable, pays,
- * fuseau, population). Les favoris et le comparateur manipulent ainsi exactement le
- * même type d'objet, quelle que soit son origine.
- *
- * Si la localité trouvée n'est pas reconnue par Open-Meteo — hameau, zone peu
- * peuplée — on renvoie une `City` construite à partir des coordonnées d'origine
- * plutôt que rien : l'utilisateur obtient la météo de sa position réelle.
- */
 export async function reverseGeocode(latitude: number, longitude: number): Promise<City | null> {
   const url = buildUrl("https://api.bigdatacloud.net/data/reverse-geocode-client", {
     latitude: latitude.toFixed(4),
@@ -195,13 +122,9 @@ export async function reverseGeocode(latitude: number, longitude: number): Promi
     "de géolocalisation",
   );
 
-  // `city` est vide en zone rurale ; `locality` prend alors le relais.
   const name = data.city?.trim() || data.locality?.trim();
   if (!name) return null;
 
-  // Le nom est réinjecté dans Open-Meteo pour récupérer les métadonnées complètes.
-  // On ne garde le résultat que s'il désigne bien le même endroit : un homonyme
-  // lointain donnerait la météo d'une autre ville que celle où se trouve l'utilisateur.
   const resolved = await resolveCity(name);
   const isNearby =
     resolved !== null &&
@@ -211,11 +134,9 @@ export async function reverseGeocode(latitude: number, longitude: number): Promi
   if (isNearby) return resolved;
 
   return {
-    // Identifiant dérivé des coordonnées : stable pour un même point, ce qui
-    // permet aux favoris de reconnaître la ville d'une visite à l'autre.
     id: Math.round(latitude * 1000) * 100000 + Math.round(longitude * 1000),
     name,
-    country: data.countryName ?? "—",
+    country: data.countryName ?? "-",
     countryCode: data.countryCode ?? "",
     admin1: data.principalSubdivision || undefined,
     latitude,
@@ -223,10 +144,6 @@ export async function reverseGeocode(latitude: number, longitude: number): Promi
     timezone: "auto",
   };
 }
-
-/* -------------------------------------------------------------------------- */
-/*                                   Météo                                    */
-/* -------------------------------------------------------------------------- */
 
 const CURRENT_FIELDS = [
   "temperature_2m",
@@ -264,10 +181,6 @@ const DAILY_FIELDS = [
   "wind_speed_10m_max",
 ];
 
-/**
- * Récupère conditions actuelles, prévisions horaires et prévisions à 7 jours
- * en **un seul appel réseau** - Open-Meteo accepte les trois blocs simultanément.
- */
 export async function getWeather(
   latitude: number,
   longitude: number,
@@ -300,8 +213,6 @@ export async function getWeather(
     windSpeedMax: data.daily.wind_speed_10m_max[i],
   }));
 
-  // L'API renvoie 7 jours × 24 h. On ne garde que la fenêtre utile à l'affichage :
-  // les 24 prochaines heures à partir de l'heure courante.
   const nowIndex = Math.max(
     0,
     data.hourly.time.findIndex((t) => t >= data.current.time),
@@ -341,17 +252,6 @@ export async function getWeather(
   };
 }
 
-/* -------------------------------------------------------------------------- */
-/*                              Qualité de l'air                              */
-/* -------------------------------------------------------------------------- */
-
-/**
- * Récupère la qualité de l'air courante.
- *
- * Renvoie `null` plutôt que de propager l'erreur : c'est une donnée d'agrément,
- * indisponible dans certaines régions, et son absence ne doit jamais faire échouer
- * l'affichage de la météo.
- */
 export async function getAirQuality(
   latitude: number,
   longitude: number,

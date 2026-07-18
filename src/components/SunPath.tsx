@@ -1,11 +1,3 @@
-/**
- * Lever, coucher du soleil et position de l'astre dans la journée.
- *
- * L'arc SVG est une courbe de Bézier fixe ; seule la position du marqueur est
- * calculée, à partir de la fraction de journée déjà écoulée. Le marqueur est
- * masqué avant le lever et après le coucher, où la notion de position n'a plus de sens.
- */
-
 import { Card, CardContent } from "@/components/ui/card";
 import { SectionHeading } from "@/components/Metric";
 import { formatTime } from "@/lib/format";
@@ -13,16 +5,13 @@ import type { DailyForecast } from "@/lib/types";
 
 interface SunPathProps {
   day: DailyForecast;
-  /** Horodatage courant, dans le fuseau de la ville (`current.time`). */
   currentTime: string;
 }
 
-/** Convertit un horodatage local sans fuseau en millisecondes comparables. */
 function toEpoch(localIsoString: string): number {
   return new Date(`${localIsoString}Z`).getTime();
 }
 
-/** Durée en heures et minutes, ex. « 15h 42min ». */
 function formatDuration(milliseconds: number): string {
   const totalMinutes = Math.round(milliseconds / 60_000);
   return `${Math.floor(totalMinutes / 60)}h ${String(totalMinutes % 60).padStart(2, "0")}min`;
@@ -37,8 +26,6 @@ export function SunPath({ day, currentTime }: SunPathProps) {
   const progress = (now - sunrise) / dayLength;
   const isDaylight = progress >= 0 && progress <= 1;
 
-  // Point de l'arc à l'abscisse `progress`, sur une Bézier quadratique
-  // allant de (10, 60) à (190, 60) avec (100, -12) pour point de contrôle.
   const t = Math.min(1, Math.max(0, progress));
   const markerX = (1 - t) ** 2 * 10 + 2 * (1 - t) * t * 100 + t ** 2 * 190;
   const markerY = (1 - t) ** 2 * 60 + 2 * (1 - t) * t * -12 + t ** 2 * 60;

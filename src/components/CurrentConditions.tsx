@@ -1,14 +1,3 @@
-/**
- * Relevé principal : température, état du ciel et grille d'instruments.
- *
- * Server Component - il ne reçoit que des données déjà résolues.
- *
- * La température est affichée dans la couleur qui lui correspond sur l'échelle
- * chromatique (voir `src/lib/temperature-scale.ts`), et la même teinte teinte
- * discrètement le fond du bloc : la fiche d'une ville sous la canicule et celle
- * d'une ville sous la neige ne se ressemblent pas, avant même la lecture.
- */
-
 import { WeatherIcon } from "@/components/WeatherIcon";
 import { Metric } from "@/components/Metric";
 import { Card, CardContent } from "@/components/ui/card";
@@ -34,7 +23,6 @@ import type { CurrentWeather } from "@/lib/types";
 interface CurrentConditionsProps {
   current: CurrentWeather;
   uvIndex: number;
-  /** Extrêmes du jour, affichés en complément de la température instantanée. */
   temperatureMin: number;
   temperatureMax: number;
 }
@@ -53,7 +41,6 @@ export function CurrentConditions({
     <Card
       className="relative overflow-hidden"
       style={{
-        // Voile de 6 % : la teinte se perçoit, le texte garde tout son contraste.
         backgroundImage: `linear-gradient(160deg, ${temperatureColor(current.temperature, 0.06)}, transparent 62%)`,
       }}
     >

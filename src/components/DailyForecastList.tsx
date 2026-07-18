@@ -1,13 +1,3 @@
-/**
- * Prévisions sur 7 jours.
- *
- * Chaque ligne porte une barre de température positionnée sur l'amplitude
- * **globale de la semaine** : une journée fraîche et une journée chaude sont donc
- * directement comparables à l'œil, ce qu'un affichage purement numérique ne permet pas.
- *
- * La barre est elle-même dégradée de la couleur du minimum à celle du maximum :
- * sa longueur donne l'amplitude, sa teinte donne le niveau.
- */
 
 import { Card, CardContent } from "@/components/ui/card";
 import { SectionHeading } from "@/components/Metric";
@@ -76,8 +66,6 @@ export function DailyForecastList({ days }: { days: DailyForecast[] }) {
                       className="absolute inset-y-0 rounded-full"
                       style={{
                         left: `${offsetPercent}%`,
-                        // Largeur minimale de 6 % pour qu'une journée à amplitude
-                        // quasi nulle reste visible sur la barre.
                         width: `${Math.max(6, widthPercent)}%`,
                         backgroundImage: `linear-gradient(to right, ${temperatureColor(day.temperatureMin)}, ${temperatureColor(day.temperatureMax)})`,
                       }}

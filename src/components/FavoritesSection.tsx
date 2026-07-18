@@ -1,13 +1,5 @@
 "use client";
 
-/**
- * Section « Mes favoris » de la page d'accueil.
- *
- * Elle gère les trois états possibles de la liste : en cours de chargement depuis
- * le stockage local, vide, ou peuplée. Distinguer explicitement le premier cas
- * évite d'afficher brièvement le message « aucun favori » à un utilisateur qui en a.
- */
-
 import Link from "next/link";
 import { GitCompareArrows, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";

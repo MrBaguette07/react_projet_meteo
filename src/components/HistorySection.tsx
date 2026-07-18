@@ -1,18 +1,5 @@
 "use client";
 
-/**
- * Section « Consultées récemment » de la page d'accueil.
- *
- * Volontairement plus discrète que les favoris : puces compactes sur une seule
- * ligne, sans vignette météo. L'historique est un raccourci de navigation, pas un
- * tableau de bord — lui donner le même poids visuel qu'aux favoris brouillerait la
- * distinction entre ce que l'utilisateur a choisi de suivre et ce qu'il a
- * simplement regardé en passant.
- *
- * La section disparaît entièrement quand l'historique est vide : afficher un bloc
- * « aucune consultation » à un nouvel utilisateur n'apporterait rien.
- */
-
 import Link from "next/link";
 import { Clock, X } from "lucide-react";
 import { Button } from "@/components/ui/button";

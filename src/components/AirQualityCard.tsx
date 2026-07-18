@@ -1,18 +1,9 @@
-/**
- * Qualité de l'air : indice européen, particules fines et risque pollinique.
- *
- * Le composant n'est rendu que si l'API a répondu (`airQuality` non nul) : la
- * couverture d'Open-Meteo pour ces données est régionale, et une carte vide serait
- * moins informative que pas de carte du tout.
- */
-
 import { Card, CardContent } from "@/components/ui/card";
 import { SectionHeading } from "@/components/Metric";
 import { Badge } from "@/components/ui/badge";
 import { describeAqi, formatMeasure, TONE_CLASSES } from "@/lib/format";
 import type { AirQuality } from "@/lib/types";
 
-/** Borne haute de la jauge : au-delà de 100, l'indice est déjà « très mauvais ». */
 const AQI_SCALE_MAX = 100;
 
 export function AirQualityCard({ airQuality }: { airQuality: AirQuality }) {

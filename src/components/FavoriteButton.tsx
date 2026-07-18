@@ -1,13 +1,5 @@
 "use client";
 
-/**
- * Bouton d'ajout/retrait des favoris, décliné en deux variantes.
- *
- * Il reçoit la `City` complète en props depuis un Server Component : c'est le seul
- * élément interactif de l'en-tête de la page de détail, le reste du rendu demeure
- * côté serveur.
- */
-
 import { Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useFavorites } from "@/lib/favorites";
@@ -16,7 +8,6 @@ import type { City } from "@/lib/types";
 
 interface FavoriteButtonProps {
   city: City;
-  /** `full` affiche un bouton avec libellé, `icon` une simple étoile. */
   variant?: "full" | "icon";
   className?: string;
 }
@@ -25,8 +16,6 @@ export function FavoriteButton({ city, variant = "full", className }: FavoriteBu
   const { isFavorite, toggleFavorite, isLoaded } = useFavorites();
   const active = isFavorite(city.id);
 
-  // Tant que le stockage local n'est pas lu, l'état favori est inconnu : on rend un
-  // bouton désactivé de même gabarit pour éviter tout saut de mise en page.
   const disabled = !isLoaded;
 
   const star = (
