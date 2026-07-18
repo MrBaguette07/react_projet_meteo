@@ -1,0 +1,111 @@
+/**
+ * Relevé principal : température, état du ciel et grille d'instruments.
+ *
+ * Server Component — il ne reçoit que des données déjà résolues.
+ *
+ * La température est affichée dans la couleur qui lui correspond sur l'échelle
+ * chromatique (voir `src/lib/temperature-scale.ts`), et la même teinte teinte
+ * discrètement le fond du bloc : la fiche d'une ville sous la canicule et celle
+ * d'une ville sous la neige ne se ressemblent pas, avant même la lecture.
+ */
+
+import { WeatherIcon } from "@/components/WeatherIcon";
+import { Metric } from "@/components/Metric";
+import { Card, CardContent } from "@/components/ui/card";
+import { describeWeather } from "@/lib/weather-codes";
+import { temperatureColor, temperatureTextColor } from "@/lib/temperature-scale";
+import {
+  describeUvIndex,
+  formatMeasure,
+  formatTemperature,
+  formatTime,
+  formatWindDirection,
+  TONE_FILLS,
+} from "@/lib/format";
+import type { CurrentWeather } from "@/lib/types";
+
+interface CurrentConditionsProps {
+  current: CurrentWeather;
+  uvIndex: number;
+  /** Extrêmes du jour, affichés en complément de la température instantanée. */
+  temperatureMin: number;
+  temperatureMax: number;
+}
+
+export function CurrentConditions({
+  current,
+  uvIndex,
+  temperatureMin,
+  temperatureMax,
+}: CurrentConditionsProps) {
+  const description = describeWeather(current.weatherCode);
+  const uv = describeUvIndex(uvIndex);
+  const accent = temperatureColor(current.temperature);
+
+  return (
+    <Card
+      className="relative overflow-hidden"
+      style={{
+        // Voile de 6 % : la teinte se perçoit, le texte garde tout son contraste.
+        backgroundImage: `linear-gradient(160deg, ${temperatureColor(current.temperature, 0.06)}, transparent 62%)`,
+      }}
+    >
+      {/* Filet supérieur à la couleur de la température : repère visuel constant. */}
+      <div className="absolute inset-x-0 top-0 h-1" style={{ backgroundColor: accent }} aria-hidden="true" />
+
+      <CardContent className="pt-2">
+        <div className="flex flex-wrap items-start justify-between gap-6">
+          <div>
+            <p className="field-label">Relevé de {formatTime(current.time)}</p>
+
+            <div className="mt-3 flex items-start">
+              <span
+                className="tabular font-heading text-[5.5rem] font-semibold leading-[0.85] tracking-tight sm:text-[7rem]"
+                style={{ color: temperatureTextColor(current.temperature) }}
+              >
+                {Math.round(current.temperature)}
+              </span>
+              <span className="mt-2 font-heading text-3xl font-medium text-muted-foreground">°C</span>
+            </div>
+
+            <p className="mt-4 font-heading text-xl font-medium">{description.label}</p>
+            <p className="tabular mt-1 text-sm text-muted-foreground">
+              Ressenti {formatTemperature(current.apparentTemperature)} · Min{" "}
+              {formatTemperature(temperatureMin)} · Max {formatTemperature(temperatureMax)}
+            </p>
+          </div>
+
+          <WeatherIcon
+            name={description.icon}
+            isDay={current.isDay}
+            size={132}
+            className="ml-auto shrink-0"
+          />
+        </div>
+
+        <div className="mt-8 grid grid-cols-2 gap-x-6 gap-y-4 sm:grid-cols-3 lg:grid-cols-6">
+          <Metric label="Humidité" value={formatMeasure(current.humidity, "%")} />
+          <Metric label="Pression" value={formatMeasure(current.pressure, "hPa")} />
+          <Metric
+            label="Vent"
+            value={formatMeasure(current.windSpeed, "km/h")}
+            hint={`${formatWindDirection(current.windDirection)} · rafales ${formatMeasure(current.windGusts, "km/h")}`}
+          />
+          <Metric label="Nébulosité" value={formatMeasure(current.cloudCover, "%")} />
+          <Metric label="Précipitations" value={formatMeasure(current.precipitation, "mm", 1)} />
+          <Metric
+            label="Indice UV"
+            value={uvIndex.toFixed(1)}
+            hint={uv.label}
+            badge={
+              <span
+                className={`size-2 rounded-full ${TONE_FILLS[uv.tone]}`}
+                aria-hidden="true"
+              />
+            }
+          />
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
