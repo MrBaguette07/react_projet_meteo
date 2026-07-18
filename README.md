@@ -57,8 +57,12 @@ Développée avec **Next.js 16 (App Router)**, **TypeScript**, **Tailwind CSS 4*
 
 - **Recherche de villes** avec suggestions en temps réel (géocodage Open-Meteo),
   navigation au clavier (`↑` `↓` `Entrée` `Échap`) et sémantique ARIA `combobox`.
+- **Géolocalisation** : le bouton « Autour de moi » de la barre de recherche ouvre
+  directement le relevé de la ville où se trouve l'utilisateur.
 - **Affichage des favoris** : chaque vignette montre la température actuelle, l'état
   du ciel, les extrêmes du jour et le vent, avec accès direct à la fiche détaillée.
+- **Historique des consultations** : les huit dernières villes ouvertes sont
+  proposées en accès rapide, chacune retirable individuellement.
 - **Villes suggérées** pour essayer l'application sans rien saisir.
 
 ### Page de détail - `/ville/[nom]`
@@ -84,6 +88,16 @@ Développée avec **Next.js 16 (App Router)**, **TypeScript**, **Tailwind CSS 4*
   onglets** : ajouter un favori dans un onglet met immédiatement l'autre à jour.
 - Contenu du stockage **validé au chargement** : une donnée corrompue est ignorée
   plutôt que de faire planter l'application.
+
+### Préférences d'affichage
+
+- **Bascule métrique / impérial** depuis l'en-tête, disponible sur toutes les pages :
+  °C ↔ °F, km/h ↔ mph, mm ↔ in, hPa ↔ inHg.
+- Le choix est **persisté** dans le `localStorage` et **ne déclenche aucun appel
+  réseau** : les données restent stockées en métrique côté serveur, seule la mise en
+  forme change. Un seul jeu de données en cache sert donc les deux systèmes.
+- La conversion est confinée à des **composants feuilles** (`src/components/units/`),
+  ce qui permet aux blocs météo de rester des Server Components.
 
 ### États de chargement et gestion d'erreurs
 

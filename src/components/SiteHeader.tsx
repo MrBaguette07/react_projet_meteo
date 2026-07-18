@@ -6,6 +6,7 @@
 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { UnitToggle } from "@/components/units/UnitToggle";
 
 const NAV_LINKS = [
   { href: "/", label: "Relevés" },
@@ -34,17 +35,22 @@ export function SiteHeader() {
           </span>
         </Link>
 
-        <nav aria-label="Navigation principale">
-          <ul className="flex items-center gap-1">
-            {NAV_LINKS.map((link) => (
-              <li key={link.href}>
-                <Button asChild variant="ghost" size="sm">
-                  <Link href={link.href}>{link.label}</Link>
-                </Button>
-              </li>
-            ))}
-          </ul>
-        </nav>
+        <div className="flex items-center gap-2 sm:gap-3">
+          <nav aria-label="Navigation principale">
+            <ul className="flex items-center gap-1">
+              {NAV_LINKS.map((link) => (
+                <li key={link.href}>
+                  <Button asChild variant="ghost" size="sm">
+                    <Link href={link.href}>{link.label}</Link>
+                  </Button>
+                </li>
+              ))}
+            </ul>
+          </nav>
+
+          {/* Seul îlot client de l'en-tête : la préférence vit dans le navigateur. */}
+          <UnitToggle />
+        </div>
       </div>
     </header>
   );
